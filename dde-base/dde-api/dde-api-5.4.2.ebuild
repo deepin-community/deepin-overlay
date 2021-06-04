@@ -41,6 +41,7 @@ RDEPEND="x11-libs/libXi
 		dev-libs/glib:2
 		x11-libs/gtk+:3
 		x11-libs/gdk-pixbuf:2
+		x11-libs/gdk-pixbuf-xlib
 		media-libs/libcanberra[pulseaudio]
 		x11-libs/libXfixes
 		|| ( net-wireless/rfkill
