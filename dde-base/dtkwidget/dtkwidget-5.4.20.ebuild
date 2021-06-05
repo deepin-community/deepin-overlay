@@ -52,12 +52,17 @@ DEPEND="${RDEPEND}
 		dev-qt/linguist-tools:5
 		"
 
+PATCHES=(                                   
+	"${FILESDIR}"/fix-qt5.patch
+)
+
 src_prepare() {
 	sed -i "/\#include </a\#include <QPainterPath>" src/util/dwidgetutil.cpp || die
-	rm -rf tests # Remove test for glib2.0
+	# rm -rf tests # Remove test for glib2.0
 	LIBDIR=$(get_libdir)
 	sed -i "s|{PREFIX}/lib/|{PREFIX}/${LIBDIR}/|g" tools/svgc/svgc.pro
-	QT_SELECT=qt5 eqmake5 PREFIX=/usr LIB_INSTALL_DIR=/usr/${LIBDIR}
+	CORE_VERSION=$(echo ${PV}| awk -F'.' '{print $1"."$2}')
+	QT_SELECT=qt5 eqmake5 PREFIX=/usr LIB_INSTALL_DIR=/usr/${LIBDIR} VERSION=${CORE_VERSION}
 	default_src_prepare
 }
 

@@ -12,11 +12,6 @@ HOMEPAGE="https://github.com/linuxdeepin/dtkcore"
 if [[ "${PV}" == *9999* ]] ; then
     inherit git-r3
     EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
-# elif [[ "${PV}" == *5.5.2 ]] ; then
-#     inherit git-r3
-#     EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
-# 	EGIT_COMMIT="fdbb283090b355e2d1841e77be765b7a2dab5297"
-# 	KEYWORDS="~amd64 ~x86"
 else
    	SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
@@ -36,8 +31,8 @@ DEPEND="${RDEPEND}"
 src_prepare() {
 	LIBDIR=$(get_libdir)
 	# sed -i "s|/lib/|/${LIBDIR}/|g" tools/settings/settings.pro || die
-	# DTKCOREVERSION=$(echo ${PV} | awk -F'.' '{print $1,$2}')
-	QT_SELECT=qt5 eqmake5 PREFIX=/usr LIB_INSTALL_DIR=/usr/$(get_libdir) VERSION=${PV}
+	CORE_VERSION=$(echo ${PV}| awk -F'.' '{print $1"."$2}')
+	QT_SELECT=qt5 eqmake5 PREFIX=/usr LIB_INSTALL_DIR=/usr/$(get_libdir) VERSION=${CORE_VERSION}
 	default_src_prepare
 }
 
