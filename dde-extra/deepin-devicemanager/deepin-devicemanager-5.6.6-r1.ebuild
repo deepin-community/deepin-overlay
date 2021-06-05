@@ -13,7 +13,7 @@ SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="debug"
 
 RDEPEND="dev-qt/qtcore:5
 		dev-qt/qtwidgets:5
@@ -68,8 +68,14 @@ src_prepare() {
 }
 
 src_configure() {
+	if use debug; then
+		build_type=Debug
+	else
+		build_type=Release
+	fi
 	local mycmakeargs=(
 		-DVERSION=${PV}
+		-DCMAKE_BUILD_TYPE=${build_type}
 	)
 	cmake-utils_src_configure
 }
