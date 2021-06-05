@@ -27,7 +27,8 @@ DEPEND="${RDEPEND}
 		"
 
 src_prepare() {
-	QT_SELECT=qt5 eqmake5 PREFIX=/usr LIB_INSTALL_DIR=/usr/$(get_libdir) VERSION=${PV}
+	CORE_VERSION=$(echo ${PV}| awk -F'.' '{print $1"."$2}')
+	QT_SELECT=qt5 eqmake5 PREFIX=/usr LIB_INSTALL_DIR=/usr/$(get_libdir) VERSION=${CORE_VERSION}
 	default_src_prepare
 }
 

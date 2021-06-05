@@ -40,6 +40,10 @@ src_prepare() {
 		src/widgets/closebutton.cpp || die
 
 	sed -i "s/\ qm_files//" introduction.pro || die
+
+	sed -i '$a DEFINES += DISABLE_VIDEO\nHEADERS -= src/modules/videowidget.h\n' introduction.pro || die
+	sed -i '$a SOURCES -= src/modules/videowidget.cpp\nPKGCONFIG -= libdmr\n' introduction.pro || die
+	# sed -i '/#include <player_widget.h>/d' src/modules/videowidget.h
 	QT_SELECT=qt5 eqmake5
 }
 

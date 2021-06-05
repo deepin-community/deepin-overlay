@@ -32,8 +32,6 @@ src_prepare() {
 }
 
 src_configure() {
-	# sed -i "/^MimeType=/d" app/deepin-clone.desktop
-	# sed -i "/^NoDisplay=/d" app/deepin-clone.desktop
 	local mycmakeargs=(
 		-DVERSION=${PV}
 	)

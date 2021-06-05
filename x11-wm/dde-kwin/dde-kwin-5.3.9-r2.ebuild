@@ -41,6 +41,7 @@ DEPEND="${RDEPEND}
 
 PATCHES=(                          
     "${FILESDIR}"/deepin-kwin-crash.patch
+	"${FILESDIR}"/rename_thumbnail_grid.patch
 )
 
 src_prepare() {

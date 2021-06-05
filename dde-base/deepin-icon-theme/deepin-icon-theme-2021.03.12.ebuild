@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=7
-inherit gnome2-utils
+inherit gnome2-utils xdg-utils
 
 DESCRIPTION="Deepin Icons"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-icon-theme"
@@ -17,7 +17,8 @@ DEPEND="dev-util/gtk-update-icon-cache"
 
 src_prepare() {
 	sed -i '/v20/d' Makefile || die
-
+	# remove Vintage
+	sed -i '/Vintage/d' Makefile || die
 	default_src_prepare
 }
 
@@ -29,9 +30,8 @@ src_install() {
 	emake DESTDIR="$D" install-icons install-cursors
 	insinto /usr/share/icons/
 	doins -r Sea usr/share/icons/hicolor
+	# doins -r Vintage usr/share/icons/hicolor
 }
 
-pkg_preinst() { gnome2_icon_savelist; }
-pkg_postinst() { gnome2_icon_cache_update; }
-pkg_postrm() { gnome2_icon_cache_update; }
-
+pkg_postinst() { xdg_icon_cache_update; }
+pkg_postrm() { xdg_icon_cache_update; }
