@@ -20,6 +20,7 @@ RDEPEND="dev-qt/qtwidgets:5
 		sys-apps/dbus
 		systemd? ( sys-apps/systemd )
 		elogind? ( sys-auth/elogind )
+		>=dde-base/dtkwidget-5.4
 		"
 DEPEND="${RDEPEND}
 		virtual/pkgconfig
