@@ -9,8 +9,20 @@ inherit cmake-utils
 DESCRIPTION="KWin configures on DDE"
 HOMEPAGE="https://github.com/linuxdeepin/dde-kwin"
 
-SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-KEYWORDS="~amd64 ~x86"
+if [[ "${PV}" == *9999* ]] ; then
+    inherit git-r3
+    EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
+elif [[ "${PV}" == *5.3.14* ]] ; then
+	inherit git-r3
+    EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
+	EGIT_COMMIT="8f68adda0c05dbe81f5ccc06d0bcb704efb3836e"
+	KEYWORDS="~amd64 ~x86"
+else
+   	SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+	KEYWORDS="~amd64 ~x86"
+fi
+
+
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -48,11 +60,11 @@ src_prepare() {
 	LIBDIR=$(get_libdir)
 	sed -i "s|/usr/lib/|/usr/${LIBDIR}/|g" deepin-wm-dbus/deepinwmfaker.cpp || die
 
-	# sed -i "s/m_blurManager->create/\/\/m_blurManager->create/g" plugins/kwineffects/blur/blur.cpp || die
-
-	# sed -i "s/add_subdirectory(tabbox)//g" CMakeLists.txt
-
-	# rm -rf tabbox
+	# fix: Crashing when open multitasking view
+	# sed -i "/m_multitaskingModel->deleteLater();/d" \
+	# 	plugins/kwineffects/multitasking/multitasking.cpp || die
+	# sed -i "s/m_thumbManager->deleteLater();/m_multitaskingView->deleteLater();\nm_multitaskingModel->deleteLater();\nm_thumbManager->deleteLater();\n/" \
+	# 	plugins/kwineffects/multitasking/multitasking.cpp || die
 
 	cmake-utils_src_prepare
 }
