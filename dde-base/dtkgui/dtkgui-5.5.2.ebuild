@@ -28,6 +28,10 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	CORE_VERSION=$(echo ${PV}| awk -F'.' '{print $1"."$2}')
+	# Patch out 5.5 suffix. The version number in dtkcore & friends never matched their tags,
+	# and current version of dde-session-shell requires 5.5 explicitly. Let's make qmake and
+	# cmake happy while upstream didn't react on this matter.
+	find . -name '*.pro' -exec sed -i 's/dtkcore5.5/dtkcore/g;s/dtkgui5.5/dtkgui/g' {} \;
 	QT_SELECT=qt5 eqmake5 PREFIX=/usr LIB_INSTALL_DIR=/usr/$(get_libdir) VERSION=${CORE_VERSION}
 	default_src_prepare
 }

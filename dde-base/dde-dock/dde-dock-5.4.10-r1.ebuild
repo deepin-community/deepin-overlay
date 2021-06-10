@@ -42,7 +42,9 @@ src_prepare() {
 		plugins/show-desktop/showdesktopplugin.cpp \
 		frame/controller/dockpluginscontroller.cpp \
 		plugins/tray/system-trays/systemtrayscontroller.cpp || die
-
+	local mycmakeargs=(
+		-DDOCK_TRAY_USE_NATIVE_POPUP=YES
+	)
 	cmake-utils_src_prepare
 }
 
