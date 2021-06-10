@@ -6,8 +6,8 @@ EAPI=7
 
 inherit qmake-utils gnome2-utils
 
-DESCRIPTION="Base development tool of all C++/Qt Developer work on Deepin - Core modules"
-HOMEPAGE="https://github.com/linuxdeepin/dtkcore"
+DESCRIPTION="A public project for building DTK Library"
+HOMEPAGE="https://github.com/linuxdeepin/dtkcommon"
 
 if [[ "${PV}" == *9999* ]] ; then
     inherit git-r3
@@ -20,18 +20,20 @@ LICENSE="GPL-3"
 SLOT="0/${PV}"
 IUSE=""
 
-RDEPEND=">=dev-qt/qtcore-5.15:5
-		dev-qt/qtdbus
-		dev-qt/qttest
-		x11-libs/gsettings-qt
-		>=dde-base/dtkcommon-5.5.2
+RDEPEND="dev-libs/glib:2
+        virtual/pkgconfig
+        dev-qt/qtcore:5
+        dev-cpp/gtest
 	    "
 DEPEND="${RDEPEND}"
 
 src_prepare() {
-	LIBDIR=$(get_libdir)
-	# sed -i "s|/lib/|/${LIBDIR}/|g" tools/settings/settings.pro || die
 	CORE_VERSION=$(echo ${PV}| awk -F'.' '{print $1"."$2}')
+	LIBDIR=$(get_libdir)
+    sed -i "/^prf.path/cprf.path = /usr/$LIBDIR/qt5/mkspecs/features" dtkcommon.pro || die
+    sed -i "/^cmake_dtk.path/ccmake_dtk.path = /usr/$LIBDIR/cmake/Dtk" dtkcommon.pro || die
+    sed -i "/^dtkcommon_module.path/cdtkcommon_module.path = /usr/$LIBDIR/qt5/mkspecs/modules" dtkcommon.pro || die
+	sed -i 's|/etc/dbus-1|/usr/share/dbus-1|' dtkcommon.pro || die
 	QT_SELECT=qt5 eqmake5 PREFIX=/usr LIB_INSTALL_DIR=/usr/$(get_libdir) VERSION=${CORE_VERSION}
 	default_src_prepare
 }

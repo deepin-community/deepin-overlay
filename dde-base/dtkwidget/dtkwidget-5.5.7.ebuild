@@ -59,6 +59,10 @@ PATCHES=(
 src_prepare() {
 	sed -i "/\#include </a\#include <QPainterPath>" src/util/dwidgetutil.cpp || die
 	# rm -rf tests # Remove test for glib2.0
+	# Patch out 5.5 suffix. The version number in dtkcore & friends never matched their tags,
+	# and current version of dde-session-shell requires 5.5 explicitly. Let's make qmake and
+	# cmake happy while upstream didn't react on this matter.
+	find . -name '*.pro' -exec sed -i 's/dtkcore5.5/dtkcore/g;s/dtkgui5.5/dtkgui/g;s/dtkwidget5.5/dtkwidget/g' {} \;
 	LIBDIR=$(get_libdir)
 	sed -i "s|{PREFIX}/lib/|{PREFIX}/${LIBDIR}/|g" tools/svgc/svgc.pro
 	CORE_VERSION=$(echo ${PV}| awk -F'.' '{print $1"."$2}')

@@ -26,7 +26,7 @@ fi
 
 LICENSE="GPL-3"
 SLOT="0"
-IUSE=""
+IUSE="debug"
 
 RDEPEND="x11-libs/gsettings-qt
 		dev-qt/qtcore:5
@@ -66,12 +66,29 @@ src_prepare() {
 	# sed -i "s/m_thumbManager->deleteLater();/m_multitaskingView->deleteLater();\nm_multitaskingModel->deleteLater();\nm_thumbManager->deleteLater();\n/" \
 	# 	plugins/kwineffects/multitasking/multitasking.cpp || die
 
+	# sed -i '570/d' \
+	# 	plugins/kwineffects/multitasking/windowthumbnail.cpp
+	# sed -i '570 i\auto *context = glXGetCurrentContext();' \
+	# 	plugins/kwineffects/multitasking/windowthumbnail.cpp
+	# sed -i 's/auto \*context = window()->openglContext();/auto\* context = new QOpenGLContext();\n/g'\
+	# 	plugins/kwineffects/multitasking/windowthumbnail.cpp || die
+	
+	# sed -i 's/window()->openglContext()/QOpenGLContext::globalShareContext()/g' \
+	# 	plugins/kwineffects/multitasking/windowthumbnail.cpp
+	# sed -i 's/set(HAVE_GLX ${HAVE_X11})/set(HAVE_GLX 0)/' \
+	# 	plugins/kwineffects/multitasking/CMakeLists.txt
 	cmake-utils_src_prepare
 }
 
 src_configure() {
+	if use debug; then
+		build_type=Debug
+	else
+		build_type=RelWithDebInfo
+	fi
 	local mycmakeargs=(
 		-DPROJECT_VERSION=${PV}
+		-DCMAKE_BUILD_TYPE=${build_type}
 	)
 
 	cmake-utils_src_configure

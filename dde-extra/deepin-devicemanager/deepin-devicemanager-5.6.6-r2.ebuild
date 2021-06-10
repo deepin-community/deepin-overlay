@@ -39,31 +39,12 @@ DEPEND="${RDEPEND}
 		"
 
 src_prepare() {
-	sed -i "/<QDebug>/a\#include\ <QContextMenuEvent>\n\#include\ <QKeyEvent>" \
-		deepin-devicemanager/src/Widget/TextBrowser.cpp || die
-	sed -i "/<QDebug>/a\#include\ <QPainterPath>" \
-		deepin-devicemanager/src/Widget/logtreeview.cpp || die
-	sed -i "/<QList>/a\#include\ <QMap>" \
-		deepin-devicemanager/src/DeviceManager/DeviceManager.h || die
-	sed -i "/<QList>/a\#include\ <QFile>" \
-		deepin-devicemanager/src/Widget/logtreeview.cpp || die
-	sed -i "/<QList>/a\#include\ <QIODevice>" \
-		deepin-devicemanager/3rdparty/docx/opc/packagereader.h || die
-	sed -i "/<QPainter>/a\#include\ <QPainterPath>" \
-		deepin-devicemanager/src/Page/PageInfo.cpp \
-		deepin-devicemanager/src/Page/PageDetail.cpp \
-		deepin-devicemanager/src/Widget/CmdButtonWidget.cpp \
-		deepin-devicemanager/src/Widget/DetailViewDelegate.cpp \
-		deepin-devicemanager/src/Widget/RichTextDelegate.cpp \
-		deepin-devicemanager/src/Widget/DeviceListView.cpp \
-		deepin-devicemanager/src/Widget/DetailTreeView.cpp \
-		deepin-devicemanager/src/Widget/TableWidget.cpp \
-		deepin-devicemanager/src/Widget/logviewheaderview.cpp \
-		deepin-devicemanager/src/Widget/logviewitemdelegate.cpp || die
-
-
 	sed -i 's#stub.set(ADDR(QThreadPool, start), ut_ThreadPool_start);#stub.set(static_cast<void (QThreadPool::*)(QRunnable*, int)>(ADDR(QThreadPool, start)), ut_ThreadPool_start);#g' \
-		deepin-devicemanager/tests/src/ThreadPool/ut_readfilepool.cpp
+		deepin-devicemanager/tests/src/ThreadPool/ut_readfilepool.cpp || die
+	sed -i 's|/etc/dbus-1|/usr/share/dbus-1|' \
+		deepin-devicemanager-server/CMakeLists.txt || die
+	# sed -i '/const QString COMMUNITY_STR =/c\const QString COMMUNITY_STR = "Gentoo-DDE";' \
+	# 	deepin-devicemanager/src/MacroDefinition.h || die
 	cmake-utils_src_prepare
 }
 

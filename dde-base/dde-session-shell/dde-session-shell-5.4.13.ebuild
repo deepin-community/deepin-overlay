@@ -49,9 +49,8 @@ DEPEND="${RDEPEND}
 		"
 
 src_prepare() {
-	# fix find 5.4
-	sed -i 's/DtkWidget5.5/DtkWidget/g' CMakeLists.txt
-
+	# remove 5.5
+	sed -i 's|5\.5||' CMakeLists.txt tests/dde-lock/CMakeLists.txt tests/lightdm-deepin-greeter/CMakeLists.txt
 	# fix cannot auth
 	sed -i 's|common-auth|system-auth|' \
 		src/libdde-auth/authagent.cpp || die
@@ -63,12 +62,7 @@ src_prepare() {
 	sed -i "s|FILES\ files\/deepin-greeter|PROGRAMS\ files\/deepin-greeter|g" \
 		CMakeLists.txt || die
 
-	sed -i '245d' CMakeLists.txt
-
-	# remove tests
-	sed -i '217d' CMakeLists.txt
-	
-	# rm -rf tests
+	sed -i '/install(CODE "execute_process/d' CMakeLists.txt || die
 
 	cmake-utils_src_prepare
 }
