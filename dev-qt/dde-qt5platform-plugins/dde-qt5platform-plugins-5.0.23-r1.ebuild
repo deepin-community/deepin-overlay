@@ -46,10 +46,19 @@ RDEPEND="
 DEPEND="${RDEPEND}
 		"
 
+PATCHES=( 	
+	"${FILESDIR}"/fix-crasher.patch
+	"${FILESDIR}"/deepin-only.patch
+)
+
 src_prepare() {
+	rm -r xcb/libqt5xcbqpa-dev wayland/qtwayland-dev
+	# Disable wayland for now: https://github.com/linuxdeepin/qt5platform-plugins/issues/47
+	sed -i '/wayland/d' qt5platform-plugins.pro
+
 	sed -i 's/active\ =\ VtableHook::overrideVfptrFun.*/active\ =\ 1;/' xcb/dhighdpi.cpp || die
 	QT_SELECT=qt5 eqmake5 ${MY_PN}.pro
-	default
+	default_src_prepare
 }
 
 src_install() {

@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2021 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -41,15 +41,11 @@ DEPEND="${RDEPEND}
 	>=dde-base/dtkwidget-5.1.2:=
 	"
 
-PATCHES=( 	
-	"${FILESDIR}"/${PN}-5.1.0.1-qt5.15.patch 
-)
-
 src_prepare() {
-	default
 	sed -i "/<DTabBar>/a\#include\ <DSpinBox>" styleplugins/chameleon/chameleonstyle.cpp || die 
 	sed -i "7d" qt5integration.pro
 	QT_SELECT=qt5 eqmake5 ${MY_PN}.pro
+	default_src_prepare
 }
 
 src_install() {
