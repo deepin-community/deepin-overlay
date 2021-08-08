@@ -12,16 +12,15 @@ HOMEPAGE="https://github.com/linuxdeepin/dde-kwin"
 if [[ "${PV}" == *9999* ]] ; then
     inherit git-r3
     EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
-elif [[ "${PV}" == *5.3.14* ]] ; then
-	inherit git-r3
-    EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
-	EGIT_COMMIT="8f68adda0c05dbe81f5ccc06d0bcb704efb3836e"
-	KEYWORDS="~amd64 ~x86"
+# elif [[ "${PV}" == *5.3.14* ]] ; then
+# 	inherit git-r3
+#     EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
+# 	EGIT_COMMIT="8f68adda0c05dbe81f5ccc06d0bcb704efb3836e"
+# 	KEYWORDS="~amd64 ~x86"
 else
    	SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
 fi
-
 
 
 LICENSE="GPL-3"
@@ -46,37 +45,20 @@ RDEPEND="x11-libs/gsettings-qt
 		sys-libs/mtdev
 		kde-plasma/kwin:5
 		dde-base/dde-qt5integration
-		>=dde-base/dtkcore-2.0.9
+		>=dde-base/dtkcore-5.4.0
 		"
 DEPEND="${RDEPEND}
+		app-portage/gentoolkit
 		"
 
-PATCHES=(                          
+PATCHES=(
+	"${FILESDIR}"/rename_thumbnail_grid.patch                 
     "${FILESDIR}"/deepin-kwin-crash.patch
-	"${FILESDIR}"/rename_thumbnail_grid.patch
 )
 
 src_prepare() {
 	LIBDIR=$(get_libdir)
 	sed -i "s|/usr/lib/|/usr/${LIBDIR}/|g" deepin-wm-dbus/deepinwmfaker.cpp || die
-
-	# fix: Crashing when open multitasking view
-	# sed -i "/m_multitaskingModel->deleteLater();/d" \
-	# 	plugins/kwineffects/multitasking/multitasking.cpp || die
-	# sed -i "s/m_thumbManager->deleteLater();/m_multitaskingView->deleteLater();\nm_multitaskingModel->deleteLater();\nm_thumbManager->deleteLater();\n/" \
-	# 	plugins/kwineffects/multitasking/multitasking.cpp || die
-
-	# sed -i '570/d' \
-	# 	plugins/kwineffects/multitasking/windowthumbnail.cpp
-	# sed -i '570 i\auto *context = glXGetCurrentContext();' \
-	# 	plugins/kwineffects/multitasking/windowthumbnail.cpp
-	# sed -i 's/auto \*context = window()->openglContext();/auto\* context = new QOpenGLContext();\n/g'\
-	# 	plugins/kwineffects/multitasking/windowthumbnail.cpp || die
-	
-	# sed -i 's/window()->openglContext()/QOpenGLContext::globalShareContext()/g' \
-	# 	plugins/kwineffects/multitasking/windowthumbnail.cpp
-	# sed -i 's/set(HAVE_GLX ${HAVE_X11})/set(HAVE_GLX 0)/' \
-	# 	plugins/kwineffects/multitasking/CMakeLists.txt
 	cmake-utils_src_prepare
 }
 
@@ -88,9 +70,9 @@ src_configure() {
 	fi
 	local mycmakeargs=(
 		-DPROJECT_VERSION=${PV}
+		-DKWIN_VERSION=$(equery w kwin | sed 's/.*kwin-\(.*\).ebuild$/\1/' | awk -F'-' '{ print $1 }')
 		-DCMAKE_BUILD_TYPE=${build_type}
 	)
-
 	cmake-utils_src_configure
 }
 

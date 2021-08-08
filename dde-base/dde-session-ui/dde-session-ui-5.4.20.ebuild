@@ -4,10 +4,10 @@
 
 EAPI=7
 
-inherit cmake-utils gnome2-utils
+inherit qmake-utils gnome2-utils
 
-DESCRIPTION="Deepin desktop environment - Session Shell module"
-HOMEPAGE="https://github.com/linuxdeepin/dde-session-shell"
+DESCRIPTION="Deepin desktop environment - Session UI module"
+HOMEPAGE="https://github.com/linuxdeepin/dde-session-ui"
 if [[ "${PV}" == *9999* ]] ; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
@@ -36,43 +36,42 @@ RDEPEND="
 		 dev-qt/qtx11extras:5
 		 dev-qt/qtwidgets:5
 		 dev-qt/qtsvg:5
-		 dev-qt/qtxml:5
 		 >=dde-base/dde-daemon-5.9.0[systemd?,elogind?]
 		 >=dde-base/deepin-desktop-schemas-5.4.0
 		 >=dde-base/startdde-5.2.1
+		 >=dde-base/dde-dock-5.0.27
+		 dde-base/dde-session-shell
 		"
 DEPEND="${RDEPEND}
-		>=dde-base/dtkwidget-5.1.2:=
+		>=dde-base/dtkwidget-5.5:=
 		>=dde-base/deepin-gettext-tools-1.0.6
-		>=dde-base/dde-qt-dbus-factory-5.2.0.4:=
+		>=dde-base/dde-qt-dbus-factory-1.1.5:=
 		virtual/pkgconfig
 		"
 
+
 src_prepare() {
-	# remove 5.5
-	sed -i 's|5\.5||' CMakeLists.txt tests/dde-lock/CMakeLists.txt tests/lightdm-deepin-greeter/CMakeLists.txt
-	# fix cannot auth
-	sed -i 's|common-auth|system-auth|' \
-		src/libdde-auth/authagent.cpp || die
+	if use elogind; then
+		sed -i "s|libsystemd|libelogind|g" dde-switchtogreeter/dde-switchtogreeter.pro || die
+		sed -i "s|systemd/sd-login.h|elogind/systemd/sd-login.h|g" dde-switchtogreeter/switchtogreeter.c || die
+	fi
 
 	LIBDIR=$(get_libdir)
 	sed -i "s|lib/deepin-daemon|${LIBDIR}/deepin-daemon|g" \
-		scripts/lightdm-deepin-greeter || die
-
-	sed -i "s|FILES\ files\/deepin-greeter|PROGRAMS\ files\/deepin-greeter|g" \
-		CMakeLists.txt || die
-
-	sed -i '/install(CODE "execute_process/d' CMakeLists.txt || die
-
-	cmake-utils_src_prepare
+		d*/*.pro \
+		d*/*.service \
+		dde-osd/notification/files/*.service.in \
+		misc/applications/deepin-toggle-desktop.desktop.in || die
+	sed -i "s|/lib/|/${LIBDIR}/|g" \
+		dde-notification-plugin/notifications/notifications.pro || die
+	sed -i 's|/usr/share/backgrounds/default_background.jpg|/usr/share/backgrounds/deepin/desktop.jpg|' \
+		widgets/*.cpp || die
+	QT_SELECT=qt5 eqmake5 PREFIX=/usr
+	default_src_prepare
 }
 
 src_install() {
-	cmake-utils_src_install
-
-	fperms 0755 /usr/bin/dde-lock
-	fperms 0755 /usr/bin/lightdm-deepin-greeter
-	fperms 0755 /usr/bin/deepin-greeter
+	emake INSTALL_ROOT=${D} install
 }
 
 pkg_postinst() {

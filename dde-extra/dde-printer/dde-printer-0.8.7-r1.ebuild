@@ -35,6 +35,7 @@ src_prepare() {
 	sed -i "s|/usr/lib|/usr/${LIBDIR}|g" src/cppcups/cppcups.pro || die
 	sed -i "s|-lcrypto++|-lcryptopp|g" src/Printer/Printer.pro || die
 
+	sed -i '$aOnlyShowIn=Deepin' src/Printer/platform/linux/dde-printer.desktop
 	sed -i "s/#include <strings.h>/#include <strings.h>\n#include <stdexcept>/g" src/cppcups/cupssnmp.cpp || die
 
 	export QT_SELECT=qt5

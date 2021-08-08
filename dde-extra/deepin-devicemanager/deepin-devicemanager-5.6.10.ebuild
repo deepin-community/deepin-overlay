@@ -61,3 +61,6 @@ src_configure() {
 	cmake-utils_src_configure
 }
 
+pkg_postinst() {
+	elog "systemctl enable deepin-devicemanager-server.service"
+}

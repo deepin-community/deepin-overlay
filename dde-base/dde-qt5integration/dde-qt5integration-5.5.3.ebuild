@@ -38,12 +38,12 @@ RDEPEND="
 	"
 DEPEND="${RDEPEND}
 	dev-libs/glib:2
-	>=dde-base/dtkwidget-5.1.2:=
+	>=dde-base/dtkwidget-5.5:=
 	"
 
 src_prepare() {
-	sed -i "/<DTabBar>/a\#include\ <DSpinBox>" styleplugins/chameleon/chameleonstyle.cpp || die 
-	sed -i "7d" qt5integration.pro
+	rm -rf tests
+	sed -i '/tests/d' qt5integration.pro
 	QT_SELECT=qt5 eqmake5 ${MY_PN}.pro
 	default_src_prepare
 }
