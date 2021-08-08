@@ -55,6 +55,7 @@ src_prepare() {
 	# 	src/process/system_stat.cpp || die
 	# sed -i "s/print_err/print_err2/g" \
 	# 	src/process/desktop_entry_stat.cpp || die
+	sed -i 's|5\.5||' CMakeLists.txt
 	cmake-utils_src_prepare
 }
 

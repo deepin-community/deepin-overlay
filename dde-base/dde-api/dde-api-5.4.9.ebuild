@@ -23,6 +23,11 @@ EGO_VENDOR=(
 "github.com/godbus/dbus e0a146e"
 "github.com/fsnotify/fsnotify 7f4cf4d"
 "golang.org/x/sys cc9327a github.com/golang/sys"
+"github.com/stretchr/testify acba37e"
+"github.com/davecgh/go-spew 87df7c6"
+"github.com/pmezard/go-difflib 792786c"
+"github.com/stretchr/objx 35313a9"
+"gopkg.in/yaml.v3 496545a github.com/go-yaml/yaml"
 )
 
 inherit golang-vcs-snapshot golang-build

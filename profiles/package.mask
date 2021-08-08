@@ -66,4 +66,4 @@ x11-libs/deepin-ui
 
 # Rabenda <rabenda.cn@gmail.com> (06 Jun 2021)
 # Mask dde-kwin 5.3.9 because it crashed
->x11-wm/dde-kwin-5.3.9
+#>x11-wm/dde-kwin-5.3.9

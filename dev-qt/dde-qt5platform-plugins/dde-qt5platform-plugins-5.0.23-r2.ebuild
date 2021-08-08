@@ -44,6 +44,7 @@ RDEPEND="
 	!<=dde-base/dde-qt5integration-0.2.7
 	"
 DEPEND="${RDEPEND}
+		app-portage/portage-utils
 		"
 
 PATCHES=( 	
@@ -57,6 +58,8 @@ src_prepare() {
 	sed -i '/wayland/d' qt5platform-plugins.pro
 
 	sed -i 's/active\ =\ VtableHook::overrideVfptrFun.*/active\ =\ 1;/' xcb/dhighdpi.cpp || die
+	private_header=$(q list qtxcb-private-headers | head -n 1 | xargs dirname)
+	sed -i "s|error(Not support Qt Version: .*)|INCLUDEPATH += ${private_header} |" xcb/linux.pri
 	QT_SELECT=qt5 eqmake5 ${MY_PN}.pro
 	default_src_prepare
 }

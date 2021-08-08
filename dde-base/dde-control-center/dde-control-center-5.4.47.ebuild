@@ -40,15 +40,12 @@ RDEPEND="dev-qt/qtsvg:5
 		>=dde-base/dde-qt5integration-5.1.0
 		redshift? ( x11-misc/redshift )
 		!systemd? ( app-admin/openrc-settingsd )
+		dde-base/deepin-pw-check
 		"
 DEPEND="${RDEPEND}
 		>=dde-base/dtkwidget-5.2.2.2:=
 		>=dde-base/dde-qt-dbus-factory-5.2.0.1:=
 		"
-
-PATCHES=(                          
-    "${FILESDIR}"/remove_pw_check.patch
-)
 
 src_prepare() {
 	sed -i '/new CommonInfoModule(this), tr("General Settings")/d' src/frame/window/mainwindow.cpp || die
@@ -61,6 +58,9 @@ src_prepare() {
 		src/frame/window/modules/systeminfo/systeminfomodule.cpp || die
 	sed -i '/dcc_protocol/d' \
 		src/frame/window/modules/systeminfo/systeminfowidget.cpp || die
+
+	# fix qt error
+	sed -i '/#include <QPointer>/i #include <QDBusMetaType>' src/frame/window/modules/network/connectioneditpage.h || die
 	LIBDIR=$(get_libdir)
 	sed -i "s|DESTINATION\ lib|DESTINATION\ ${LIBDIR}|g" \
 		src/develop-tool/CMakeLists.txt \

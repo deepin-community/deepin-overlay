@@ -40,17 +40,6 @@ DEPEND="${RDEPEND}
 		virtual/pkgconfig
 		"
 
-src_prepare() {
-	sed -i "s|-DCMAKE|-DCMAKE_INSTALL_LIBDIR=\$path/../lib/lib -DCMAKE|" 3rdparty/uchartdet_install.sh || die
-
-	sed -i "/<QPainter>/a\#include\ <QPainterPath>" \
-		src/widgets/bottombar.cpp \
-		src/thememodule/themeitemdelegate.cpp \
-		src/thememodule/themepanel.cpp || die
-
-	cmake-utils_src_prepare
-}
-
 src_configure() {
 	local mycmakeargs=(
 		-DVERSION=${PV}
