@@ -48,23 +48,20 @@ DEPEND="${RDEPEND}
 		"
 
 src_prepare() {
-	sed -i '/new CommonInfoModule(this), tr("General Settings")/d' src/frame/window/mainwindow.cpp || die
-	sed -i '/new SyncModule(this), DSysInfo::isCommunityEdition()/d' src/frame/window/mainwindow.cpp || die
 	# remove after they obey -DDISABLE_SYS_UPDATE properly
 	sed -i '/new UpdateModule/i#ifndef DISABLE_SYS_UPDATE' src/frame/window/mainwindow.cpp || die
 	sed -i '/new UpdateModule/a#endif' src/frame/window/mainwindow.cpp || die
 	# remove end user license
-	sed -i 's/GSettingWatcher::instance()->insertState("endUserLicenseAgreement");//g' \
+	sed -i '/GSettingWatcher::instance()->insertState("endUserLicenseAgreement");/d' \
 		src/frame/window/modules/systeminfo/systeminfomodule.cpp || die
-	sed -i '/dcc_protocol/d' \
-		src/frame/window/modules/systeminfo/systeminfowidget.cpp || die
-
+	
 	# fix qt error
 	sed -i '/#include <QPointer>/i #include <QDBusMetaType>' src/frame/window/modules/network/connectioneditpage.h || die
 	LIBDIR=$(get_libdir)
 	sed -i "s|DESTINATION\ lib|DESTINATION\ ${LIBDIR}|g" \
 		src/develop-tool/CMakeLists.txt \
-		src/frame/CMakeLists.txt || die
+		src/frame/CMakeLists.txt \
+		src/reboot-reminder-dialog/CMakeLists.txt || die
 	sed -i "s|/usr/lib/|/usr/${LIBDIR}/|g" \
 		src/frame/modules/update/updatework.cpp || die
 
