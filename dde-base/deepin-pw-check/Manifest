@@ -1,4 +1,5 @@
 DIST deepin-pw-check-5.0.17.tar.gz 64019 SHA256 31089375a2252f9b18660cf875b7da5ae46610979d666babfb2b9c7ce57542ca
+DIST deepin-pw-check-5.0.22.tar.gz 63889 SHA256 e0d5f23ad611548c54b0b32f8882b870db5c284c8ab10bda3ada69e223cf7099
 DIST github.com-davecgh-go-spew-87df7c6.tar.gz 42209 SHA256 6951f22a526d10b7fb5d4993aac82b9e419c75d83ec381d1be9eea88cc82fc34
 DIST github.com-fsnotify-fsnotify-7f4cf4d.tar.gz 31933 SHA256 c80ad5a145d4b1caee51ecd6663c88b193e7b45505d45dedc84f2c1ce29f1b66
 DIST github.com-go-yaml-yaml-496545a.tar.gz 90279 SHA256 2957ebb38ae0a48a515d20eacb430197832ec57cfc3672ac879f03ca5561db37

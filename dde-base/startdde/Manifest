@@ -10,3 +10,4 @@ DIST github.com-pmezard-go-difflib-792786c.tar.gz 11399 SHA256 3c346b08c4f1bfeff
 DIST github.com-stretchr-objx-35313a9.tar.gz 80678 SHA256 976d17ab92b00ef19fda6261b16f00efe5dd46ee64339920461be5b57cb5c3c5
 DIST github.com-stretchr-testify-acba37e.tar.gz 91263 SHA256 6a8518f979ee5f7d85cc6c312cab56bc2177286dd51948a37d5ba9a9ed422eca
 DIST startdde-5.8.22.tar.gz 209535 SHA256 89d3b51b8b2b3d75f8f0083fdca82aecb67e1a8e8287602257715ab7a228d8af
+DIST startdde-5.8.29.tar.gz 211103 SHA256 4e313998ba31578e539fa0f6feff3b7c72f30b4f3beb3bc2927727c3035ffc72

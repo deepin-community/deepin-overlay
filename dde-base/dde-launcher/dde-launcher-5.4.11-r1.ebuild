@@ -35,7 +35,7 @@ src_configure() {
 		-DWITHOUT_UNINSTALL_APP=1
 		-DVERSION=${PV}
 	)
-	sed -i '143d' CMakeLists.txt
+	sed -i '/install(CODE "execute_process/d' CMakeLists.txt || die
 	cmake-utils_src_configure
 }
 

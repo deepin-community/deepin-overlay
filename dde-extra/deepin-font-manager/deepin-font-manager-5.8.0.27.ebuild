@@ -42,6 +42,9 @@ src_prepare() {
 	sed -i "/<QHBoxLayout>/a\#include <QKeyEvent>" \
 		deepin-font-manager/views/dfdeletedialog.cpp || die
 
+	# Fix linker flags
+    sed -i 's/CMAKE_EXE_LINKER_FLAGS "-pie"/CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie"/' deepin-font-manager/CMakeLists.txt || die
+
 	LIBDIR=$(get_libdir)
 	sed -i "s|lib/|${LIBDIR}/|g" \
 		deepin-font-preview-plugin/CMakeLists.txt || die
