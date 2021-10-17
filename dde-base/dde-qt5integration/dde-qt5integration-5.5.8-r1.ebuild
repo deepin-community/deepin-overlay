@@ -42,8 +42,8 @@ DEPEND="${RDEPEND}
 	"
 
 src_prepare() {
-	# rm -rf tests
-	# sed -i '/tests/d' qt5integration.pro
+	rm -rf tests
+	sed -i '/tests/d' qt5integration.pro
 	QT_SELECT=qt5 eqmake5 ${MY_PN}.pro
 	default_src_prepare
 }
