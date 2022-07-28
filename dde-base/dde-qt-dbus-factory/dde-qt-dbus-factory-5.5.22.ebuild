@@ -1,8 +1,8 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=7
+EAPI=8
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit qmake-utils
 
@@ -12,7 +12,7 @@ SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 
 LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
 RDEPEND="dev-qt/qtdbus:5
@@ -20,7 +20,7 @@ RDEPEND="dev-qt/qtdbus:5
 
 DEPEND="${RDEPEND}
 		dev-qt/qtgui:5
-		dev-lang/python"
+		"
 
 src_prepare() {
 	QT_SELECT=qt5 eqmake5	PREFIX=/usr LIB_INSTALL_DIR=/usr/$(get_libdir)
