@@ -1,8 +1,7 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=7
+EAPI=8
 
 inherit qmake-utils
 
@@ -10,11 +9,11 @@ DESCRIPTION="Base development tool of all C++/Qt Developer work on Deepin - Widg
 HOMEPAGE="https://github.com/linuxdeepin/dtkwidget"
 
 if [[ "${PV}" == *9999* ]] ; then
-     inherit git-r3
-     EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
+	inherit git-r3
+	EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
 else
-     SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-	 KEYWORDS="~amd64 ~x86"
+	SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+	KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 fi
 LICENSE="GPL-3"
 SLOT="0/${PV}"
@@ -46,9 +45,9 @@ RDEPEND="dev-qt/qtmultimedia:5[widgets]
 		"
 DEPEND="${RDEPEND}
 		dev-libs/glib:2
-		>=dde-base/dtkcore-5.1.2:=
-		>=dde-base/dtkgui-5.1.2
-		>=dde-base/dde-qt-dbus-factory-5.0.0
+		>=dde-base/dtkcore-5.5.0:=
+		>=dde-base/dtkgui-5.5.0
+		>=dde-base/dde-qt-dbus-factory-5.5.0
 		dev-qt/linguist-tools:5
 		"
 
@@ -65,4 +64,3 @@ src_prepare() {
 src_install() {
 	emake INSTALL_ROOT=${D} install
 }
-
