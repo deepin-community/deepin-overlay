@@ -3,7 +3,7 @@
 
 EAPI=7
 
-EGO_PN="pkg.deepin.io/lib/"
+EGO_PN="github.com/linuxdeepin/go-lib"
 
 inherit golang-vcs-snapshot
 
