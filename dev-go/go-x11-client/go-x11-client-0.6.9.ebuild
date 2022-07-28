@@ -14,7 +14,7 @@ SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 
 LICENSE="GPL-3+"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
 RDEPEND=""
@@ -23,6 +23,6 @@ DEPEND="${RDEPEND}"
 
 src_install() {
 	rm -r ${S}/src/${EGO_PN}/debian
-	insinto $(get_golibdir_gopath)
+	insinto $(get_golibdir)
 	doins -r src
 }
