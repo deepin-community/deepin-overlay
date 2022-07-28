@@ -1,10 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-EGO_PN="pkg.deepin.io/dde/api"
+EGO_PN="github.com/linuxdeepin/dde-api"
 EGO_VENDOR=(
 "golang.org/x/image f315e440302883054d0c2bd85486878cb4f8572c github.com/golang/image"
 "golang.org/x/net aaf60122140d3fcf75376d319f0554393160eb50 github.com/golang/net"
@@ -30,7 +29,7 @@ EGO_VENDOR=(
 "gopkg.in/yaml.v3 496545a github.com/go-yaml/yaml"
 )
 
-inherit golang-vcs-snapshot golang-build
+inherit golang-vcs-snapshot golang-build xdg-utils
 
 DESCRIPTION="Go-lang bingdings for dde-daemon"
 HOMEPAGE="https://github.com/linuxdeepin/dde-api"
@@ -39,7 +38,7 @@ ${EGO_VENDOR_URI}"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
 RDEPEND="x11-libs/libXi
@@ -63,6 +62,7 @@ DEPEND="${RDEPEND}
 		>=dev-go/go-gir-generator-2.0.0
 		dev-go/go-dbus-factory
 		dev-go/go-x11-client
+		dde-base/deepin-gettext-tools
 		"
 
 src_prepare() {
@@ -82,16 +82,18 @@ src_compile() {
 	mkdir -p "${T}/golibdir/"
 	cp -r  "${S}/src/${EGO_PN}/vendor"  "${T}/golibdir/src"
 
-	rm -r "${S}/src/${EGO_PN}/vendor/github.com/godbus"
+	rm -r "${S}/src/${EGO_PN}/vendor/github.com/godbus" || die
 
 	export -n GOCACHE XDG_CACHE_HOME
-	export GOPATH="${S}:${T}/golibdir/:$(get_golibdir_gopath)"
+	export GOPATH="${S}:${T}/golibdir/:$(get_golibdir)"
 	cd ${S}/src/${EGO_PN}
 	emake
 }
 
-
 src_install() {
 	cd ${S}/src/${EGO_PN}
-	emake DESTDIR=${D} libdir=/$(get_libdir) SYSTEMD_LIB_DIR=/lib GOSITE_DIR=$(get_golibdir_gopath) install
+	emake DESTDIR=${D} libdir=/$(get_libdir) SYSTEMD_LIB_DIR=/lib GOSITE_DIR=$(get_golibdir) install
 }
+
+pkg_postinst() { xdg_icon_cache_update; }
+pkg_postrm() { xdg_icon_cache_update; }
