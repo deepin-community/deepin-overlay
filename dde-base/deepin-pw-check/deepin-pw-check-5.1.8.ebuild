@@ -1,6 +1,5 @@
-# Copyright 1999-2021 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
@@ -16,7 +15,7 @@ EGO_VENDOR=(
 "gopkg.in/yaml.v3 496545a github.com/go-yaml/yaml"
 )
 
-inherit golang-vcs-snapshot 
+inherit golang-vcs-snapshot pam
 
 DESCRIPTION="Provide password check for dde-control-center"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-pw-check"
@@ -25,10 +24,12 @@ ${EGO_VENDOR_URI}"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
-RDEPEND=""
+RDEPEND="
+		virtual/libcrypt:=
+		"
 
 DEPEND="${RDEPEND}
 		dev-libs/iniparser
@@ -37,13 +38,14 @@ DEPEND="${RDEPEND}
 src_prepare() {
 	cd ${S}/src/${EGO_PN}
 	LIBDIR=$(get_libdir)
-	sed -i "s|/usr/lib/|/usr/${LIBDIR}/|g" \
+	sed -i "s|/usr/lib|/usr/${LIBDIR}|g" \
 		misc/system-services/com.deepin.daemon.PasswdConf.service \
 		misc/pkgconfig/libdeepin_pw_check.pc || die
+	sed -i "s|0.0.0.1|${PN}|" misc/pkgconfig/libdeepin_pw_check.pc || die
 
-    sed -i 's|iniparser/iniparser.h|iniparser4/iniparser.h|' tool/pwd_conf_update.c lib/deepin_pw_check.c || die
-    sed -i 's|iniparser/dictionary.h|iniparser4/dictionary.h|' tool/pwd_conf_update.c lib/deepin_pw_check.c  || die
-    sed -i 's|-liniparser|-liniparser4|' Makefile || die
+	sed -i 's|iniparser/iniparser.h|iniparser4/iniparser.h|' tool/pwd_conf_update.c lib/deepin_pw_check.c || die
+	sed -i 's|iniparser/dictionary.h|iniparser4/dictionary.h|' tool/pwd_conf_update.c lib/deepin_pw_check.c  || die
+	sed -i 's|-liniparser|-liniparser4|' Makefile || die
 
 	sed -i "s|{PREFIX}/lib|{PREFIX}/${LIBDIR}|" Makefile || die
 
@@ -55,16 +57,15 @@ src_compile() {
 	cp -r  "${S}/src/${EGO_PN}/vendor"  "${T}/golibdir/src"
 	rm -rf ${S}/src/${EGO_PN}/vendor
 	export -n GOCACHE XDG_CACHE_HOME
-	export GOPATH="${S}:$(get_golibdir_gopath):${T}/golibdir/"
-    cd ${S}/src/${EGO_PN}
+	export GOPATH="${S}:$(get_golibdir):${T}/golibdir/"
+	cd ${S}/src/${EGO_PN}
 	emake all
-	# fix control-center
 	cd out
-	ln -s libdeepin_pw_check.so.1.1 libdeepin_pw_check.so.1
+	ln -s libdeepin_pw_check.so libdeepin_pw_check.so.1
 }
-
 
 src_install() {
 	cd ${S}/src/${EGO_PN}
-	emake DESTDIR=${D} install
+	emake DESTDIR=${D} PKG_FILE_DIR=/usr/$(get_libdir)/pkgconfig PAM_MODULE_DIR=$(getpam_mod_dir) install
+	#dosym /usr/$(get_libdir)/libdeepin_pw_check.so /usr/$(get_libdir)/libdeepin_pw_check.so.1
 }
