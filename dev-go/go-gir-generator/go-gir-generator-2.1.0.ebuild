@@ -3,7 +3,7 @@
 
 EAPI=7
 
-EGO_PN="pkg.deepin.io/gir"
+EGO_PN="github.com/linuxdeepin/go-gir-generator"
 
 inherit golang-base
 
