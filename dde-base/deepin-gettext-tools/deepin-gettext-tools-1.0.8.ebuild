@@ -1,12 +1,13 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit eutils
+PYTHON_COMPAT=( python3_{8..11} )
 
-KEYWORDS="~amd64 ~x86"
+inherit python-any-r1
+
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 
 DESCRIPTION="Deepin Internationalization utilities"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-gettext-tools"
@@ -24,9 +25,7 @@ DEPEND="${RDEPEND}
 		dev-qt/qtdeclarative:5
 		"
 
-
 src_prepare() {
-
 	# remove sudo in generate_mo.py
 	sed -e 's/sudo cp/cp/' -i src/generate_mo.py || die "sed failed"
 
@@ -34,4 +33,3 @@ src_prepare() {
 	sed -i "s|{PREFIX}/lib|{PREFIX}/${LIBDIR}|g" Makefile
 	default_src_prepare
 }
-
