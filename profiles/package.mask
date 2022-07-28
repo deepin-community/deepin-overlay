@@ -29,26 +29,10 @@
 
 #--- END OF EXAMPLES --- 
 
-# Aten Zhang <atenzd@gmail.com> (06 Jun 2020)
-# Masked as not need by dde-qt5integration any more.
-# Removal in a month
-dev-qt/qtstyleplugins
-
 # Aten Zhang <atenzd@gmail.com> (31 Mar 2020)
 # Masked as dependency dev-vcs/bzr was masked in gentoo repos.
 # Removal in a month
 =x11-libs/gsettings-qt-0.1*
-
-# Aten Zhang <atenzd@gmail.com> (05 May 2019)
-# Masked as they are not needed any more.
-# Removal in a month
-dde-extra/deepin-qml-widgets
-dde-extra/deepin-social-sharing
-
-# Aten Zhang <atenzd@gmail.com> (05 May 2019)
-# Masked as deepin-wm-switcher is functionally replaced by startdde, and not needed any more.
-# Removal in a month
-dde-base/deepin-wm-switcher
 
 # Aten Zhang <atenzd@gmail.com> (18 Jul 2017)
 # Masked as they are not needed any more.
