@@ -1,0 +1,43 @@
+From ae18eff47b0b5883a5805623f0b02ef1d2639cbc Mon Sep 17 00:00:00 2001
+From: Han Gao <gaohan@deepin.org>
+Date: Thu, 19 May 2022 21:52:39 +0800
+Subject: [PATCH] feat: add Gentoo for DSysInfo
+
+add gentoo define to DSysInfo
+
+Signed-off-by: Han Gao <gaohan@deepin.org>
+---
+ src/dsysinfo.cpp | 5 +++++
+ src/dsysinfo.h   | 3 ++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/src/dsysinfo.cpp b/src/dsysinfo.cpp
+index 02c57898..8ca3873c 100644
+--- a/src/dsysinfo.cpp
++++ b/src/dsysinfo.cpp
+@@ -454,6 +454,11 @@ void DSysInfoPrivate::ensureReleaseInfo()
+             if (productTypeString.compare("fedora", Qt::CaseInsensitive) == 0)
+                 productType = DSysInfo::Fedora;
+             break;
++        case 'g':
++        case 'G':
++            if (productTypeString.compare("gentoo", Qt::CaseInsensitive) == 0)
++                productType = DSysInfo::Gentoo;
++            break;
+         case 'l':
+         case 'L':
+             if (productTypeString.compare("linuxmint", Qt::CaseInsensitive) == 0)
+diff --git a/src/dsysinfo.h b/src/dsysinfo.h
+index 136652e9..c0e7e98c 100644
+--- a/src/dsysinfo.h
++++ b/src/dsysinfo.h
+@@ -43,7 +43,8 @@ class LIBDTKCORESHARED_EXPORT DSysInfo
+         openSUSE,
+         SailfishOS,
+         Ubuntu,
+-        Uos
++        Uos,
++        Gentoo
+     };
+ 
+     enum DeepinType {
