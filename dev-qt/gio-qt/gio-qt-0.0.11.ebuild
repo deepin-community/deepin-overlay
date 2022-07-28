@@ -1,9 +1,8 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
-inherit cmake-utils
+inherit cmake
 
 DESCRIPTION="Qt wrapper library of Gio"
 HOMEPAGE="https://github.com/linuxdeepin/gio-qt"
@@ -13,15 +12,16 @@ if [[ ${PV} = *9999* ]]; then
 	EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
 else
 	SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="~amd64 ~x86"
+	KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 fi
 
 LICENSE="GPL-3"
 SLOT="0"
 IUSE="doc test"
+RESTRICT="!test? ( test )"
 
 RDEPEND="
-	>=dev-qt/qtcore-5.6.3:5
+	>=dev-qt/qtcore-5.15:5
 	"
 DEPEND="${RDEPEND}
 		doc? ( app-doc/doxygen )
@@ -36,5 +36,5 @@ src_configure() {
 		-DBUILD_TESTS="$(usex test)"
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }
