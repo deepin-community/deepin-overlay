@@ -1,12 +1,13 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-EGO_PN="pkg.deepin.io/dde/daemon"
-EGO_VENDOR=( 
-"github.com/msteinert/pam f29b9f28d6f9a1f6c4e6fd5db731999eb946574b" 
+PYTHON_COMPAT=( python3_{8..11} )
+
+EGO_PN="github.com/linuxdeepin/dde-daemon"
+EGO_VENDOR=(
+"github.com/msteinert/pam f29b9f28d6f9a1f6c4e6fd5db731999eb946574b"
 "github.com/axgle/mahonia 3358181d7394e26beccfae0ffde05193ef3be33a"
 "gopkg.in/alecthomas/kingpin.v2 947dcec5ba9c011838740e680966fd7087a71d0d github.com/alecthomas/kingpin"
 "golang.org/x/image f315e440302883054d0c2bd85486878cb4f8572c github.com/golang/image"
@@ -37,7 +38,7 @@ EGO_VENDOR=(
 "gopkg.in/yaml.v3 496545a github.com/go-yaml/yaml"
 )
 
-inherit golang-vcs-snapshot pam
+inherit golang-vcs-snapshot pam python-any-r1 udev
 
 DESCRIPTION="Daemon handling the DDE session settings"
 HOMEPAGE="https://github.com/linuxdeepin/dde-daemon"
@@ -48,7 +49,7 @@ RESTRICT="mirror"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE="grub bluetooth systemd elogind"
 REQUIRED_USE="^^ ( systemd elogind )"
 
@@ -82,6 +83,9 @@ DEPEND="${RDEPEND}
 		dev-db/sqlite:3
 		=dev-lang/python-3*
 		"
+PATCHES=(
+	"${FILESDIR}"/${PN}-5.14.44-fix-vanilla-libinput.patch
+)
 
 src_prepare() {
 
@@ -123,7 +127,6 @@ src_prepare() {
 		session/power/lid_switch.go \
 		session/power/constant.go || die
 
-
 	default_src_prepare
 }
 
@@ -137,4 +140,12 @@ src_compile() {
 src_install() {
 	cd ${S}/src/${EGO_PN}
 	default_src_install
+}
+
+pkg_postinst() {
+	udev_reload
+}
+
+pkg_postrm() {
+	udev_reload
 }
