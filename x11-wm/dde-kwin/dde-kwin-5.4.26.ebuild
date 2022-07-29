@@ -16,7 +16,7 @@ if [[ "${PV}" == *9999* ]] ; then
 else
 	SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz
 			$DDE_KWIN_PATCH"
-	KEYWORDS="~amd64 ~x86"
+	KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 fi
 
 LICENSE="GPL-3"
@@ -63,6 +63,10 @@ src_prepare() {
 #  sed -i '/add_definitions(-DTARGET_NAME=/cadd_definitions(-DTARGET_NAME="${TARGET_NAME}")' plugins/kdecoration/CMakeLists.txt || die
 
 	sed -i 's|/usr/share/backgrounds/default_background.jpg|/usr/share/backgrounds/deepin/desktop.jpg|' plugins/kwineffects/multitasking/background.cpp || die
+	# Fix kwin 5.25
+	sed -i 's|LanczosCacheRole|WindowBackgroundContrastRole|g' plugins/kwineffects/scissor-window/scissorwindow.h || die
+	sed -i 's|GLRenderTarget|GLFramebuffer|g' plugins/kwineffects/scissor-window/scissorwindow.cpp || die
+	sed -i '204,206d' plugins/kwineffects/scissor-window/scissorwindow.cpp || die
 	cmake_src_prepare
 }
 
