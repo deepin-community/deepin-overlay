@@ -1,10 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit qmake-utils gnome2-utils
+inherit qmake-utils xdg
 
 DESCRIPTION="Deepin desktop environment - Session UI module"
 HOMEPAGE="https://github.com/linuxdeepin/dde-session-ui"
@@ -13,7 +12,7 @@ if [[ "${PV}" == *9999* ]] ; then
 	EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
 else
 	SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 fi
 
 LICENSE="GPL-3"
@@ -47,8 +46,8 @@ DEPEND="${RDEPEND}
 		>=dde-base/deepin-gettext-tools-1.0.6
 		>=dde-base/dde-qt-dbus-factory-1.1.5:=
 		virtual/pkgconfig
+		dev-perl/XML-LibXML
 		"
-
 
 src_prepare() {
 	if use elogind; then
@@ -72,12 +71,4 @@ src_prepare() {
 
 src_install() {
 	emake INSTALL_ROOT=${D} install
-}
-
-pkg_postinst() {
-	gnome2_schemas_update
-}
-
-pkg_postrm() {
-	gnome2_schemas_update
 }
