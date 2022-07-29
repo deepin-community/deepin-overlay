@@ -1,9 +1,7 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
-
 
 inherit qmake-utils
 
@@ -13,13 +11,13 @@ SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
 DEPEND="${RDEPEND}
 		x11-libs/libX11
 		x11-libs/libxcb
-		>=dde-base/dtkwidget-5.1.2:=
+		>=dde-base/dtkwidget-5.5:=
 		>=dde-base/dde-qt-dbus-factory-5.0.16
 		>=dde-base/dde-qt5integration-5.1.0
 		>=dde-base/dde-api-5.1.1
@@ -27,7 +25,7 @@ DEPEND="${RDEPEND}
 		dev-qt/qtdeclarative:5
 	    "
 src_prepare() {
-	QT_SELECT=qt5 eqmake5
+	QT_SELECT=qt5 eqmake5 DEFINES+=QT_NO_DEBUG_OUTPUT
 	default_src_prepare
 }
 
