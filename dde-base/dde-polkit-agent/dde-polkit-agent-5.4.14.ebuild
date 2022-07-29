@@ -22,7 +22,7 @@ RDEPEND="dev-qt/qtcore:5
 		sys-auth/polkit-qt[qt5(+)]
 		"
 DEPEND="${RDEPEND}
-		>=dde-base/dtkwidget-5.4:=
+		>=dde-base/dtkwidget-5.5.0:=
 		"
 
 src_prepare() {
@@ -30,7 +30,7 @@ src_prepare() {
 	# https://github.com/linuxdeepin/developer-center/issues/1721
 	sed -i 's/bool is_deepin = true/bool is_deepin = false/' policykitlistener.cpp || die
 	# https://github.com/linuxdeepin/dde-polkit-agent/issues/26
-  	sed -i '/setCancel/d' policykitlistener.cpp || die
+	sed -i '/setCancel/d' policykitlistener.cpp || die
 	sed -i "s|/usr/lib/|/usr/${LIBDIR}/|g" \
 		polkit-dde-authentication-agent-1.desktop \
 		pluginmanager.cpp \
