@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
@@ -30,17 +29,17 @@ RESTRICT="mirror"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
 RDEPEND=">=dde-base/dde-daemon-5.9.0
 		x11-wm/dde-kwin
 		>=dde-base/deepin-desktop-schemas-5.4.0
+		dev-qt/dde-qt5platform-plugins
 		"
 
 DEPEND="${RDEPEND}
 		gnome-base/libgnome-keyring
-		dev-lang/coffee-script
 		app-misc/ddcutil
 		>=dev-go/go-gir-generator-2.0.0
 		>=dev-go/go-dbus-factory-1.8.0.0
