@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
@@ -10,10 +9,9 @@ SRC_URI=""
 
 LICENSE="metapackage"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
-IUSE="policykit manual +terminal terminal-old multimedia grub plymouth elogind systemd turbo +kwin extra screensaver"
-REQUIRED_USE="^^ ( systemd elogind )
-			?? ( terminal terminal-old )"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
+IUSE="policykit manual +terminal multimedia grub plymouth elogind systemd turbo extra +screensaver"
+REQUIRED_USE="^^ ( systemd elogind )"
 
 RDEPEND=">=dde-base/dde-control-center-5.0.33
 		x11-wm/dde-kwin
@@ -30,12 +28,11 @@ RDEPEND=">=dde-base/dde-control-center-5.0.33
 		turbo? ( dde-extra/deepin-turbo[systemd?,elogind?] )
 		manual? ( >=dde-extra/deepin-manual-5.6.0 )
 		terminal? ( dde-extra/deepin-terminal )
-		terminal-old? ( dde-extra/deepin-terminal-old )
 		multimedia? ( dde-extra/dde-meta-multimedia )
 		extra? ( ~dde-extra/dde-meta-apps-${PV} )
 		plymouth? ( dde-extra/plymouth-theme-deepin )
 		"
 
 pkg_postinst() {
-	( use terminal || use terminal-old ) && dfmterm deepin-terminal
+		use terminal && dfmterm deepin-terminal
 }
