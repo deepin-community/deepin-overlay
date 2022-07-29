@@ -1,10 +1,9 @@
-# Copyright 1999-2021 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit cmake-utils gnome2-utils xdg-utils
+inherit xdg cmake
 
 DESCRIPTION="Simple editor for Deepin"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-editor"
@@ -12,7 +11,7 @@ SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
 RDEPEND="dev-qt/qtcore:5
@@ -22,6 +21,7 @@ RDEPEND="dev-qt/qtcore:5
 		dev-qt/qtx11extras:5
 		dev-qt/qtdbus:5
 		dev-qt/qtsvg:5
+		dev-libs/libchardet
 		kde-frameworks/syntax-highlighting
 		kde-frameworks/kcodecs
 		sys-auth/polkit-qt[qt5(+)]
@@ -40,19 +40,13 @@ DEPEND="${RDEPEND}
 		virtual/pkgconfig
 		"
 
+PATCHES=(
+	"$FILESDIR"/${PN}-5.10.8-fix-include.patch
+)
+
 src_configure() {
 	local mycmakeargs=(
 		-DVERSION=${PV}
 	)
-	cmake-utils_src_configure
-}
-
-pkg_postinst() {
-	gnome2_schemas_update
-	xdg_mimeinfo_database_update
-}
-
-pkg_postrm() {
-	gnome2_schemas_update
-	xdg_mimeinfo_database_update
+	cmake_src_configure
 }
