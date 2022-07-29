@@ -1,13 +1,12 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
 MODULES_OPTIONAL_USE="modules"
 MODULES_OPTIONAL_USE_IUSE_DEFAULT=0
 
-inherit linux-mod
+inherit linux-mod toolchain-funcs
 
 DESCRIPTION="Fast File Search Tool for DDE"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-anything"
@@ -15,7 +14,7 @@ SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
 DEPEND="sys-libs/glibc
@@ -45,9 +44,7 @@ src_prepare() {
 
 src_compile() {
 	emake VERSION=${PV}
-
 	use modules && linux-mod_src_compile
-
 }
 
 src_install() {
