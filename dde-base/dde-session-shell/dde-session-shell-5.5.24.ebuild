@@ -1,10 +1,9 @@
-# Copyright 1999-2021 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit cmake-utils gnome2-utils
+inherit cmake xdg
 
 DESCRIPTION="Deepin desktop environment - Session Shell module"
 HOMEPAGE="https://github.com/linuxdeepin/dde-session-shell"
@@ -13,7 +12,7 @@ if [[ "${PV}" == *9999* ]] ; then
 	EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
 else
 	SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 fi
 
 LICENSE="GPL-3"
@@ -48,10 +47,6 @@ DEPEND="${RDEPEND}
 		virtual/pkgconfig
 		"
 
-PATCHES=(
-    "${FILESDIR}"/dde-session-shell-fix-crash.patch
-)
-
 src_prepare() {
 	# fix cannot auth
 	sed -i 's|common-auth|system-auth|' \
@@ -66,21 +61,14 @@ src_prepare() {
 
 	sed -i '/install(CODE "execute_process/d' CMakeLists.txt || die
 
-	cmake-utils_src_prepare
+	sed -i 's/-Wl,--as-need//' CMakeLists.txt || die
+	cmake_src_prepare
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 
 	fperms 0755 /usr/bin/dde-lock
 	fperms 0755 /usr/bin/lightdm-deepin-greeter
 	fperms 0755 /usr/bin/deepin-greeter
-}
-
-pkg_postinst() {
-	gnome2_schemas_update
-}
-
-pkg_postrm() {
-	gnome2_schemas_update
 }
