@@ -1,10 +1,9 @@
-# Copyright 1999-2021 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit cmake-utils xdg-utils
+inherit cmake xdg-utils
 
 DESCRIPTION="Deepin Music Player"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-music"
@@ -12,14 +11,14 @@ SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 
 LICENSE="GPL-3+"
 SLOT="3"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE="+mp3 +flac +ogg +aac"
 
 RDEPEND="dev-qt/qtmultimedia:5[gstreamer]
 	dev-libs/icu
 	dev-qt/qtsvg:5
 	dev-qt/qtconcurrent:5
-	>dde-base/deepin-menu-2.90.1
+	dde-base/deepin-menu
 	sys-devel/bison
 	media-libs/libcue
 	media-video/ffmpeg
@@ -29,7 +28,7 @@ RDEPEND="dev-qt/qtmultimedia:5[gstreamer]
 	x11-libs/qtmpris
 	"
 DEPEND="${RDEPEND}
-	>=dde-base/dtkwidget-5.1.2:=
+	>=dde-base/dtkwidget-5.5:=
 	"
 
 src_prepare() {
@@ -37,17 +36,17 @@ src_prepare() {
 	sed -i '/pkg_check_modules(DBusextended/d' src/music-player/CMakeLists.txt || die
 	sed -i 's/PkgConfig::DBusextended//g' src/music-player/CMakeLists.txt || die
 	sed -i "s|lib/|${LIBDIR}/|g" src/libmusic-plugin/CMakeLists.txt || die
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 pkg_postinst() {
-    xdg_desktop_database_update
-    xdg_mimeinfo_database_update
-    xdg_icon_cache_update
+	xdg_desktop_database_update
+	xdg_mimeinfo_database_update
+	xdg_icon_cache_update
 }
 
 pkg_postrm() {
-    xdg_desktop_database_update
-    xdg_mimeinfo_database_update
-    xdg_icon_cache_update
+	xdg_desktop_database_update
+	xdg_mimeinfo_database_update
+	xdg_icon_cache_update
 }
