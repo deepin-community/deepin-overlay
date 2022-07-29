@@ -1,15 +1,14 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit cmake-utils gnome2-utils
+inherit cmake xdg
 
 DESCRIPTION="Control Center of Deepin Desktop Environment"
 HOMEPAGE="https://github.com/linuxdeepin/dde-control-center"
 SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -30,7 +29,6 @@ RDEPEND="dev-qt/qtsvg:5
 		>=dde-base/dde-daemon-5.9.0
 		>=dde-base/dde-api-5.1.1
 		dde-base/dde-account-faces
-		>=dde-base/dde-dock-5.0.27
 		>=dde-base/startdde-5.2.1
 		>=dde-base/dde-network-utils-5.0.4
 		dev-util/desktop-file-utils
@@ -43,9 +41,14 @@ RDEPEND="dev-qt/qtsvg:5
 		dde-base/deepin-pw-check
 		"
 DEPEND="${RDEPEND}
-		>=dde-base/dtkwidget-5.2.2.2:=
+		>=dde-base/dtkwidget-5.5.0:=
 		>=dde-base/dde-qt-dbus-factory-5.2.0.1:=
+		virtual/libcrypt:=
 		"
+
+PATCHES=(
+	"$FILESDIR"/dde-control-center-5.5.77-disable-auth.patch
+)
 
 src_prepare() {
 	# remove after they obey -DDISABLE_SYS_UPDATE properly
@@ -54,9 +57,6 @@ src_prepare() {
 	# remove end user license
 	sed -i '/GSettingWatcher::instance()->insertState("endUserLicenseAgreement");/d' \
 		src/frame/window/modules/systeminfo/systeminfomodule.cpp || die
-	
-	# fix qt error
-	sed -i '/#include <QPointer>/i #include <QDBusMetaType>' src/frame/window/modules/network/connectioneditpage.h || die
 	LIBDIR=$(get_libdir)
 	sed -i "s|DESTINATION\ lib|DESTINATION\ ${LIBDIR}|g" \
 		src/develop-tool/CMakeLists.txt \
@@ -66,7 +66,10 @@ src_prepare() {
 		src/frame/modules/update/updatework.cpp || die
 
 	sed -i '/execute_process(COMMAND glib-compile-schemas/d' CMakeLists.txt
-	cmake-utils_src_prepare
+	# Fix mold
+	sed -i 's/-Wl,--as-need//' src/frame/CMakeLists.txt || die
+	#sed -i 's/module" OFF/module" ON/' src/frame/CMakeLists.txt || die
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -74,15 +77,8 @@ src_configure() {
 		-DDISABLE_SYS_UPDATE_SOURCE_CHECK=YES
 		-DDISABLE_SYS_UPDATE_MIRRORS=YES
 		-DDISABLE_SYS_UPDATE=YES
+		-DDISABLE_AUTHENTICATION=YES
 		-DCVERSION=${PV}
 	)
-	cmake-utils_src_configure
-}
-
-pkg_postinst() {
-	gnome2_schemas_update
-}
-
-pkg_postrm() {
-	gnome2_schemas_update
+	cmake_src_configure
 }
