@@ -1,9 +1,9 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 GNOME2_LA_PUNT="yes"
-PYTHON_COMPAT=( python3_{8,9} )
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit gnome2 python-any-r1 multilib-minimal
 
@@ -13,7 +13,8 @@ HOMEPAGE="https://wiki.gnome.org/Projects/GnomeKeyring"
 LICENSE="LGPL-2+ GPL-2+" # tests are GPL-2
 SLOT="0"
 IUSE="debug +introspection test"
-KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~mips ~sh ~amd64-fbsd ~x86-fbsd ~amd64-linux ~arm-linux ~x86-linux ~sparc-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~arm-linux ~x86-linux ~sparc-solaris"
+RESTRICT="!test? ( test )"
 
 RDEPEND="
 	>=dev-libs/glib-2.16.0:2[${MULTILIB_USEDEP}]
