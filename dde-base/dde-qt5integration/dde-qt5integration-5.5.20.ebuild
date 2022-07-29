@@ -1,6 +1,5 @@
-# Copyright 1999-2021 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 inherit qmake-utils
@@ -15,7 +14,7 @@ if [[ ${PV} = *9999* ]]; then
 	EGIT_REPO_URI="https://github.com/linuxdeepin/${MY_PN}.git"
 else
 	SRC_URI="https://github.com/linuxdeepin/${MY_PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="~amd64 ~x86"
+	KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 	S=${WORKDIR}/${MY_P}
 fi
 
@@ -48,6 +47,10 @@ src_prepare() {
 	default_src_prepare
 }
 
+src_compile() {
+	emake -j1
+}
+
 src_install() {
-	emake INSTALL_ROOT=${D} install
+	emake -j1 INSTALL_ROOT=${D} install
 }
