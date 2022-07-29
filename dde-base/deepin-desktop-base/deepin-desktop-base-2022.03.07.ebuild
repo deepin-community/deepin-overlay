@@ -19,13 +19,14 @@ DEPEND="dde-base/deepin-wallpapers
 
 src_prepare() {
 	LIBDIR=$(get_libdir)
-	sed -i "s|/usr/lib/|/usr/${LIBDIR}/|g" Makefile
+	sed -i "s|/usr/lib/|/usr/${LIBDIR}/|g" Makefile || die
+	sed -i 's|$(shell uname -m)|x86_64|g' Makefile || die
 	default_src_prepare
 }
 
 src_install() {
 	emake DESTDIR=${D} install
-
+	install -Dm644 files/os-version ${D}/etc/os-version
 	rm -r ${D}/etc/appstore.json ${D}/etc/lsb-release ${D}/etc/systemd ${D}/usr/share/python-apt
 
 	insinto /usr/share/deepin
