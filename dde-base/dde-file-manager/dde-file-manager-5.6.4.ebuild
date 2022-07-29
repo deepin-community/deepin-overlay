@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
@@ -14,12 +13,13 @@ if [[ "${PV}" == *9999* ]] ; then
 	EGIT_BRANCH="develop2.0"
 else
 	SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="~amd64 ~x86"
+	KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 fi
 
 LICENSE="GPL-3"
 SLOT="0"
-IUSE="samba avfs screensaver"
+IUSE="samba avfs +screensaver"
+# Disable screensaver will compile failed
 
 RDEPEND="sys-apps/file
 		sys-fs/cryptsetup
@@ -45,7 +45,7 @@ RDEPEND="sys-apps/file
 		x11-base/xorg-proto
 		x11-libs/xcb-util
 		x11-libs/xcb-util-wm
-		>=dde-base/udisks2-qt5-5.0.3
+		>=dde-base/udisks2-qt5-5.0.6
 		app-text/poppler
 		media-video/ffmpegthumbnailer[png]
 		media-libs/taglib
@@ -66,10 +66,12 @@ DEPEND="${RDEPEND}
 		dev-libs/jemalloc
 		dde-base/deepin-anything
 		dde-base/deepin-gettext-tools
+		dev-libs/docparser
 		"
-# PATCHES=(                          
-#     "${FILESDIR}"/5.1.0-disable-screensaver.patch
-# )
+
+PATCHES=(
+	"${FILESDIR}"/${PN}-5.6.4-fix-gcc12.patch
+)
 
 src_prepare() {
 	sed -i "s|\ systemd_service||g" src/dde-file-manager-daemon/dde-file-manager-daemon.pro
@@ -81,15 +83,19 @@ src_prepare() {
 		src/dde-file-manager-lib/shutil/fileutils.cpp \
 		src/dde-desktop/main.cpp \
 		src/dde-zone/mainwindow.h || die
+	# Remove wayland
+	sed -i "/dde-select-dialog-wayland/d" filemanager.pro || die
+
 	export QT_SELECT=qt5
-	eqmake5 PREFIX=/usr VERSION=${PV} DEFINES+="VERSION=${PV} OF=_Z_OF" LIB_INSTALL_DIR=/usr/$(get_libdir) DISABLE_SCREENSAVER=$(use screensaver || echo YES) filemanager.pro || die
+	eqmake5 PREFIX=/usr VERSION=${PV} DEFINES+="VERSION=${PV} OF=_Z_OF" LIB_INSTALL_DIR=/usr/$(get_libdir) \
+		DISABLE_SCREENSAVER=$(use screensaver || echo YES) filemanager.pro || die
 	default_src_prepare
 }
 
 src_install() {
 		systemd_dounit ${S}/src/dde-file-manager-daemon/dbusservice/dde-filemanager-daemon.service
 
-		emake INSTALL_ROOT=${D} install
+		emake INSTALL_ROOT=${D} -j1 install
 
 		dobin ${FILESDIR}/dfmterm
 		dobin ${FILESDIR}/x-terminal-emulator
