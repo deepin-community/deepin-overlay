@@ -1,0 +1,94 @@
+From 5d3beacccb64f5f0806071041d1d9b0e7cd1aa85 Mon Sep 17 00:00:00 2001
+From: rewine <LHongXu@outlook.com>
+Date: Tue, 26 Apr 2022 16:26:00 +0800
+Subject: [PATCH] feat: add build flag to disable authentication module (#407)
+
+Log: authentication module make error in other distribution
+
+Task: https://github.com/linuxdeepin/developer-center/issues/2245
+---
+ src/frame/CMakeLists.txt        | 15 ++++++++++++++-
+ src/frame/window/mainwindow.cpp |  6 ++++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/src/frame/CMakeLists.txt b/src/frame/CMakeLists.txt
+index 5f78f1ec0c..32eb467657 100644
+--- a/src/frame/CMakeLists.txt
++++ b/src/frame/CMakeLists.txt
+@@ -31,6 +31,8 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+     set(CMAKE_INSTALL_PREFIX /usr)
+ endif ()
+ 
++option(DISABLE_AUTHENTICATION "disable authentication module" OFF)
++
+ set(DEFINED_LIST
+ DISABLE_OPACITY_ANIMATION
+ DISABLE_CLOUD_SYNC
+@@ -536,6 +538,10 @@ set(SRCS
+         ${NOTIFICATION_FILES}
+ )
+ 
++if (DEFINED DISABLE_AUTHENTICATION)
++    list(REMOVE_ITEM SRCS ${AUTHENTICATION_FILES})
++endif()
++
+ set(QRC
+         frame.qrc
+         modules/wacom/wacom.qrc
+@@ -560,6 +566,10 @@ set(QRC
+         window/modules/update/dccv20update.qrc
+ )
+ 
++if (DEFINED DISABLE_AUTHENTICATION)
++    list(REMOVE_ITEM QRC modules/authentication/authentication.qrc)
++endif()
++
+ # Find the library
+ find_package(PkgConfig REQUIRED)
+ find_package(DtkWidget REQUIRED)
+@@ -604,7 +614,10 @@ file(GLOB DCONFIG_FILES "../../configs/org.deepin.dde.control-center*.json")
+ dconfig_meta_files(APPID dde-control-center BASE ../../configs FILES ${DCONFIG_FILES})
+ 
+ set(DEEPIN_PW_CHECK libdeepin_pw_check.so)
+-set(SHMN_VIDEO libdareader.so)
++
++if (NOT DEFINED DISABLE_AUTHENTICATION)
++    set(SHMN_VIDEO libdareader.so)
++endif()
+ 
+ function(add_build_macro macro)
+     string(TOUPPER ${macro} macro)
+diff --git a/src/frame/window/mainwindow.cpp b/src/frame/window/mainwindow.cpp
+index bc902844f9..097f826ca7 100644
+--- a/src/frame/window/mainwindow.cpp
++++ b/src/frame/window/mainwindow.cpp
+@@ -18,7 +18,9 @@
+  * You should have received a copy of the GNU General Public License
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
++#ifndef DISABLE_AUTHENTICATION
+ #include "modules/authentication/loginoptionsmodule.h"
++#endif
+ #include "modules/accounts/accountsmodule.h"
+ #include "modules/bluetooth/bluetoothmodule.h"
+ #include "modules/commoninfo/commoninfomodule.h"
+@@ -312,7 +314,9 @@ void MainWindow::initAllModule(const QString &m)
+         return;
+ 
+     m_bInit = true;
++#ifndef DISABLE_AUTHENTICATION
+     using namespace authentication;
++#endif
+     using namespace sync;
+     using namespace datetime;
+     using namespace defapp;
+@@ -332,7 +336,9 @@ void MainWindow::initAllModule(const QString &m)
+     using namespace notification;
+ 
+     m_modules = {
++    #ifndef DISABLE_AUTHENTICATION
+         { new LoginOptionsModule(this), tr("Biometric Authentication")},
++    #endif
+         { new AccountsModule(this), tr("Accounts")},
+         { new DisplayModule(this), tr("Display")},
+         { new TouchscreenModule(this), tr("Touch Screen")},
