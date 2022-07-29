@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
@@ -19,10 +18,14 @@ DEPEND="dev-libs/glib:2
 		>=dde-base/deepin-desktop-base-2020.04.12
 		>=dev-go/deepin-go-lib-5.4.5"
 
-
 src_prepare() {
-	export GOPATH="$(get_golibdir_gopath)"
-	sed -i "s#'https://www.chinauos.com', 'https://www.uniontech.com'#'https://www.gentoo.org/favicon.ico'#" schemas/com.deepin.dde.network-utils.gschema.xml
+	export GOPATH="$(get_golibdir)"
+	# fix default background url
+	sed -i "s#/usr/share/backgrounds/default_background.jpg#/usr/share/backgrounds/deepin/desktop.jpg#" \
+		overrides/common/com.deepin.wrap.gnome.desktop.override schemas/com.deepin.dde.appearance.gschema.xml
+	# fix network checker url
+	sed -i "s#'http://detect.uniontech.com', 'http://detectportal.deepin.com'#'http://www.gentoo.org/favicon.ico'#" \
+		schemas/com.deepin.dde.network-utils.gschema.xml
 	default_src_prepare
 }
 
