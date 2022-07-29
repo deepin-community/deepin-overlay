@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
@@ -10,9 +9,9 @@ DESCRIPTION="UDisks2 DBus interfaces binding of Qt5"
 HOMEPAGE="https://github.com/linuxdeepin/udisks2-qt5"
 SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
-LICENSE="GPL-3"
+LICENSE="LGPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
 RDEPEND=""
@@ -31,4 +30,3 @@ src_prepare() {
 src_install() {
 	emake INSTALL_ROOT=${D} install
 }
-
