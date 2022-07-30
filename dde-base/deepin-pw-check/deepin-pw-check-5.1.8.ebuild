@@ -33,6 +33,7 @@ RDEPEND="
 
 DEPEND="${RDEPEND}
 		dev-libs/iniparser
+		dde-base/deepin-gettext-tools
 		"
 
 src_prepare() {
