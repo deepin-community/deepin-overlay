@@ -22,6 +22,7 @@ DEPEND="sys-libs/glibc
 	dev-qt/qtcore:5
 	dev-qt/qtdbus:5
 	dde-base/udisks2-qt5
+	dev-qt/qtchooser
 		"
 
 BUILD_TARGETS="all"
