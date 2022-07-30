@@ -42,6 +42,7 @@ RDEPEND="dev-qt/qtmultimedia:5[widgets]
 		 media-libs/fontconfig
 		 media-libs/mesa
 		 virtual/libudev
+		 dev-qt/qtchooser
 		"
 DEPEND="${RDEPEND}
 		dev-libs/glib:2
