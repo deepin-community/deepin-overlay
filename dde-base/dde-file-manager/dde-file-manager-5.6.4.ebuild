@@ -70,6 +70,7 @@ DEPEND="${RDEPEND}
 		"
 
 PATCHES=(
+	"${FILESDIR}"/${PN}-fix-crash-426.patch
 	"${FILESDIR}"/${PN}-5.6.4-fix-gcc12.patch
 )
 
@@ -85,6 +86,17 @@ src_prepare() {
 		src/dde-zone/mainwindow.h || die
 	# Remove wayland
 	sed -i "/dde-select-dialog-wayland/d" filemanager.pro || die
+
+	# Fix Riscv
+	sed -i 's/isEqual(ARCH, loongarch64)/isEqual(ARCH, loongarch64) | isEqual(ARCH, riscv64)/g' \
+		src/common/common.pri \
+		src/dde-file-manager/dde-file-manager.pro \
+		src/dde-desktop/dde-desktop-build.pri \
+		src/dde-file-manager-lib/dde-file-manager-lib.pro || die
+
+	if use riscv ; then
+		sed -i 's/-lKF5Codecs/-lKF5Codecs -latomic/' src/dde-file-manager-lib/dde-file-manager-lib.pro
+	fi
 
 	export QT_SELECT=qt5
 	eqmake5 PREFIX=/usr VERSION=${PV} DEFINES+="VERSION=${PV} OF=_Z_OF" LIB_INSTALL_DIR=/usr/$(get_libdir) \
