@@ -1,10 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit cmake-utils
+inherit cmake
 
 DESCRIPTION="Deepin Log Viewer"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-log-viewer"
@@ -14,7 +13,7 @@ RESTRICT="mirror"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE="elogind systemd"
 REQUIRED_USE="^^ ( systemd elogind )"
 
@@ -30,19 +29,14 @@ RDEPEND="dev-qt/qtcore:5
 		"
 
 DEPEND="${RDEPEND}
-		>=dde-base/dtkwidget-5.1.2:=
+		>=dde-base/dtkwidget-5.5.0:=
 		dev-qt/linguist-tools
 		virtual/pkgconfig
 		"
 
-PATCHES=(                                   
-	"${FILESDIR}"/5.6.6-u_errorName.patch
-)
-
 src_prepare() {
 	LIBDIR=$(get_libdir)
 	sed -i "s|lib/deepin-daemon/|${LIBDIR}/deepin-daemon/|g" logViewerService/CMakeLists.txt
-
 
 	sed -i "/<QPainter>/a\#include\ <QPainterPath>" \
 		application/logperiodbutton.cpp || die
@@ -69,12 +63,15 @@ src_prepare() {
 		tests/src/displaycontent_test.cpp
 	sed -i 's#stub.set(ADDR(QThreadPool, start)#stub.set(static_cast<void (QThreadPool::*)(QRunnable*, int)>(ADDR(QThreadPool, start))#g' \
 		tests/src/logfileparser_test.cpp
-	cmake-utils_src_prepare
+
+	# Fix mold
+	sed -i "s/as-need/as-needed/" application/CMakeLists.txt
+	cmake_src_prepare
 }
 
 src_configure() {
 	local mycmakeargs=(
 		-DVERSION=${PV}
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
