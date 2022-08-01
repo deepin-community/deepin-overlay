@@ -1,10 +1,9 @@
-# Copyright 1999-2021 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit qmake-utils gnome2-utils xdg-utils
+inherit qmake-utils xdg
 
 DESCRIPTION="PDF Document Viewer for Deepin"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-reader"
@@ -12,7 +11,7 @@ SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
 RDEPEND="dev-qt/qtcore:5
@@ -21,6 +20,7 @@ RDEPEND="dev-qt/qtcore:5
 		dev-qt/qtxml:5
 		dev-qt/qtprintsupport:5
 		dev-qt/qtsql:5
+		dev-qt/qtwebengine:5
 		app-text/poppler[qt5]
 		kde-frameworks/karchive
 		x11-libs/libX11
@@ -33,14 +33,17 @@ RDEPEND="dev-qt/qtcore:5
 		"
 
 DEPEND="${RDEPEND}
-		>=dde-base/dtkwidget-5.1.2:=
-		>=dde-base/dtkgui-5.1.2:=
+		>=dde-base/dtkwidget-5.5.0:=
+		>=dde-base/dtkgui-5.5.0:=
 		dev-qt/linguist-tools
 		virtual/pkgconfig
 		"
 
-src_prepare() {
+PATCHES=(
+	"${FILESDIR}"/${PN}-5.10.13-openjpeg-2.5.patch
+)
 
+src_prepare() {
 	LIBDIR=$(get_libdir)
 	sed -i "s|/usr/lib|/usr/${LIBDIR}|g" \
 		3rdparty/deepin-pdfium/src/src.pro || die
@@ -51,14 +54,4 @@ src_prepare() {
 
 src_install() {
 	emake INSTALL_ROOT=${D} install
-}
-
-pkg_postinst() {
-	gnome2_schemas_update
-	xdg_mimeinfo_database_update
-}
-
-pkg_postrm() {
-	gnome2_schemas_update
-	xdg_mimeinfo_database_update
 }
