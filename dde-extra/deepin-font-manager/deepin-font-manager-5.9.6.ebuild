@@ -1,10 +1,9 @@
-# Copyright 1999-2021 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit cmake-utils gnome2-utils xdg-utils
+inherit cmake xdg
 
 DESCRIPTION="Install and Uninstall Font File for Users"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-font-manager"
@@ -12,7 +11,7 @@ SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
 RDEPEND="dev-qt/qtsvg:5
@@ -22,10 +21,9 @@ RDEPEND="dev-qt/qtsvg:5
 		 media-libs/freetype:2
 		 media-libs/fontconfig
 		 dde-base/dde-file-manager:=
-		 !dde-extra/deepin-font-installer
 	     "
 DEPEND="${RDEPEND}
-		>=dde-base/dtkwidget-5.1.2:=
+		>=dde-base/dtkwidget-5.5.0:=
 	    "
 
 src_prepare() {
@@ -43,28 +41,22 @@ src_prepare() {
 		deepin-font-manager/views/dfdeletedialog.cpp || die
 
 	# Fix linker flags
-    sed -i 's/CMAKE_EXE_LINKER_FLAGS "-pie"/CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie"/' deepin-font-manager/CMakeLists.txt || die
+	sed -i 's/CMAKE_EXE_LINKER_FLAGS "-pie"/CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie"/' \
+		deepin-font-manager/CMakeLists.txt || die
 
 	LIBDIR=$(get_libdir)
 	sed -i "s|lib/|${LIBDIR}/|g" \
 		deepin-font-preview-plugin/CMakeLists.txt || die
-	
-	cmake-utils_src_prepare
+
+	# Fix mold linker
+	sed -i 's/as-need/as-needed/' deepin-font-manager/CMakeLists.txt || die
+
+	cmake_src_prepare
 }
 
 src_configure() {
 	local mycmakeargs=(
 		-DVERSION=${PV}
 	)
-	cmake-utils_src_configure
-}
-
-pkg_postinst() {
-	gnome2_schemas_update
-	xdg_mimeinfo_database_update
-}
-
-pkg_postrm() {
-	gnome2_schemas_update
-	xdg_mimeinfo_database_update
+	cmake_src_configure
 }
