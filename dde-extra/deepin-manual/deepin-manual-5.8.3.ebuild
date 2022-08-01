@@ -1,10 +1,9 @@
-# Copyright 1999-2021 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit cmake-utils
+inherit cmake xdg
 
 DESCRIPTION="Deepin User Manual"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-manual"
@@ -13,7 +12,7 @@ if [[ "${PV}" == *9999* ]] ; then
 	EGIT_REPO_URI="https://github.com/linuxdeepin/${PN}.git"
 else
 	SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="~x86 ~amd64"
+	KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 fi
 
 LICENSE="GPL-3+"
@@ -26,7 +25,7 @@ DEPEND="dev-qt/qtcore:5
 		dev-qt/qtwebengine:5[widgets]
 		dev-qt/linguist-tools:5
 		dde-base/dde-qt5integration
-		>=dde-base/dtkwidget-5.1.2:=
+		>=dde-base/dtkwidget-5.5.0:=
 		dde-base/dtkgui
 		virtual/pkgconfig
 	    "
@@ -40,20 +39,19 @@ src_prepare() {
 
 	cp src/resources/themes/common/images/deepin-manual.svg manual-assets/deepin-manual.svg
 
-	cmake-utils_src_prepare
-
+	cmake_src_prepare
 }
 
 src_configure() {
-	CMAKE_BUILD_TYPE=Release
 	local mycmakeargs=(
 		-DVERSION=${PV}
+		-DCMAKE_BUILD_TYPE=Release
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_install() {
 	${BUILD_DIR}/src/generate-search-db
-	cmake-utils_src_install
+	cmake_src_install
 }
