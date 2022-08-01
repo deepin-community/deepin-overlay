@@ -20,7 +20,7 @@ RDEPEND="dev-qt/qtcore:5
 		dev-qt/qtxml:5
 		dev-qt/qtprintsupport:5
 		dev-qt/qtsql:5
-		dev-qt/qtwebengine:5
+		dev-qt/qtwebengine:5[widgets]
 		app-text/poppler[qt5]
 		kde-frameworks/karchive
 		x11-libs/libX11
