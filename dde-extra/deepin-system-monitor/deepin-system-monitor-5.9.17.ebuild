@@ -1,10 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit cmake-utils eutils
+inherit cmake
 
 DESCRIPTION="Deepin System Monitor"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-system-monitor/"
@@ -16,7 +15,7 @@ else
 	SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 fi
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 LICENSE="GPL-3"
 SLOT="0"
 IUSE=""
@@ -35,35 +34,31 @@ RDEPEND="sys-process/procps
 	x11-libs/libXtst
 	sys-libs/ncurses
 	net-libs/libpcap
+	dev-libs/icu
 	"
 
 DEPEND="${RDEPEND}
-		>=dde-base/dtkwidget-5.4:=
+		>=dde-base/dtkwidget-5.5.0:=
 		"
 
 PATCHES=(
-	"${FILESDIR}"/5.8.8-u_errorName.patch
+	"${FILESDIR}"/${PN}-5.9.17-disable-wayland.patch
 )
 
 src_prepare() {
-	# sed -i "/<DMenu>/a\#include\ <QKeyEvent>" \
-	# 	src/gui/system_service_table_view.cpp \
-	# 	src/gui/process_table_view.cpp || die
-	# sed -i "/<QDebug>/a\#include\ <QUrl>" \
-	# 	src/process/stats_collector.cpp || die
-	# sed -i "s/print_err/print_err1/g" \
-	# 	src/process/system_stat.cpp || die
-	# sed -i "s/print_err/print_err2/g" \
-	# 	src/process/desktop_entry_stat.cpp || die
-	sed -i 's|5\.5||' CMakeLists.txt
-	cmake-utils_src_prepare
+	# Fix icu name
+	sed -i "/#undef u_errorName/d" deepin-system-monitor-main/common/han_latin.cpp || die
+	sed -i "/U_DEF2_ICU_ENTRY_POINT_RENAME/d" deepin-system-monitor-main/common/han_latin.cpp || die
+	sed -i "s/UERRORNAME/u_errorName/" deepin-system-monitor-main/common/han_latin.cpp || die
+	cmake_src_prepare
 }
 
 src_configure() {
 	local mycmakeargs=(
 		-DVERSION=${PV}
+		-DWAYLAND_SESSION_SUPPORT=OFF
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 pkg_postinst() {

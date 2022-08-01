@@ -1,0 +1,237 @@
+From 36dc3291fd45810310c3fdaeb33e493ae6433778 Mon Sep 17 00:00:00 2001
+From: rewine <lhongxu@outlook.com>
+Date: Tue, 15 Mar 2022 19:09:06 +0800
+Subject: [PATCH] fix: No such file "KWayland/Client/clientmanagement.h"
+
+Log: Add build flag to disable wayland support
+
+Bug: https://github.com/linuxdeepin/developer-center/issues/2239
+---
+ deepin-system-monitor-main/CMakeLists.txt     |  5 ++++
+ deepin-system-monitor-main/common/common.cpp  |  5 +++-
+ .../gui/xwin_kill_preview_widget.cpp          | 24 +++++++++++++++++--
+ .../gui/xwin_kill_preview_widget.h            |  9 +++++--
+ 4 files changed, 38 insertions(+), 5 deletions(-)
+
+diff --git a/deepin-system-monitor-main/CMakeLists.txt b/deepin-system-monitor-main/CMakeLists.txt
+index 6ade1d20..acb45732 100644
+--- a/deepin-system-monitor-main/CMakeLists.txt
++++ b/deepin-system-monitor-main/CMakeLists.txt
+@@ -71,6 +71,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
+ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wl,-Map=deepin-system-monitor-main.map")
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wl,-Map=deepin-system-monitor-main.map")
+ 
++option(WAYLAND_SESSION_SUPPORT "option for kwayland support" ON)
++if (WAYLAND_SESSION_SUPPORT)
++    add_definitions(-DWAYLAND_SESSION_SUPPORT)
++endif()
++
+ set(HPP_GLOBAL
+     environments.h
+     accessible.h
+diff --git a/deepin-system-monitor-main/common/common.cpp b/deepin-system-monitor-main/common/common.cpp
+index 7bf63096..9b82a7f7 100644
+--- a/deepin-system-monitor-main/common/common.cpp
++++ b/deepin-system-monitor-main/common/common.cpp
+@@ -216,13 +216,16 @@ void WaylandSearchCentered(){
+         QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+ 
+         QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+-
++#ifdef WAYLAND_SESSION_SUPPORT
+         if (XDG_SESSION_TYPE == QLatin1String("wayland") || WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)){
+             WaylandCentered = true;
+         }
+         else {
+             WaylandCentered = false;
+         }
++#else
++        WaylandCentered = false;
++#endif //WAYLAND_SESSION_SUPPORT
+ }
+ 
+ static void init_shell_list()
+diff --git a/deepin-system-monitor-main/gui/xwin_kill_preview_widget.cpp b/deepin-system-monitor-main/gui/xwin_kill_preview_widget.cpp
+index f9c68614..498f1837 100644
+--- a/deepin-system-monitor-main/gui/xwin_kill_preview_widget.cpp
++++ b/deepin-system-monitor-main/gui/xwin_kill_preview_widget.cpp
+@@ -52,10 +52,12 @@ XWinKillPreviewWidget::XWinKillPreviewWidget(QWidget *parent) : QWidget(parent)
+     m_wminfo = new WMInfo();
+ //不再使用CMakeList开关宏的方式，改用全局变量运行时控制
+ //WaylandCentered定义在common/common.h中，在main函数开头进行初始化判断
++#ifdef WAYLAND_SESSION_SUPPORT
+     if (WaylandCentered) {
+         m_connectionThread = new QThread(this);
+         m_connectionThreadObject = new ConnectionThread();
+     }
++#endif //WAYLAND_SESSION_SUPPORT
+ 
+     // init ui components & connections
+     initUI();
+@@ -79,11 +81,13 @@ XWinKillPreviewWidget::~XWinKillPreviewWidget()
+     releaseMouse();
+     releaseKeyboard();
+     delete m_wminfo;
++#ifdef WAYLAND_SESSION_SUPPORT
+     if (WaylandCentered) {
+         m_connectionThread->quit();
+         m_connectionThread->wait();
+         m_connectionThreadObject->deleteLater();
+     }
++#endif //WAYLAND_SESSION_SUPPORT
+ }
+ 
+ // mouse press event
+@@ -95,6 +99,7 @@ void XWinKillPreviewWidget::mousePressEvent(QMouseEvent *event)
+     }
+     // get the list of windows under cursor in stacked order when mouse pressed
+     auto pos = QCursor::pos();
++#ifdef WAYLAND_SESSION_SUPPORT
+     if (WaylandCentered) {
+         for(QVector<ClientManagement::WindowState>::iterator it=m_windowStates.end()-1;
+            it!=m_windowStates.begin();--it) {
+@@ -120,6 +125,7 @@ void XWinKillPreviewWidget::mousePressEvent(QMouseEvent *event)
+             }
+         }
+     } else {
++#endif //WAYLAND_SESSION_SUPPORT
+         auto list = m_wminfo->selectWindow(pos);
+ 
+         // fix cursor not update issue while moved to areas covered by intersected area of dock & normal windows
+@@ -147,12 +153,15 @@ void XWinKillPreviewWidget::mousePressEvent(QMouseEvent *event)
+                 break;
+             }
+         }
++#ifdef WAYLAND_SESSION_SUPPORT
+     }
++#endif //WAYLAND_SESSION_SUPPORT
+ }
+ 
+ // mouse move event handler
+ void XWinKillPreviewWidget::mouseMoveEvent(QMouseEvent *)
+ {
++#ifdef WAYLAND_SESSION_SUPPORT
+     if (WaylandCentered) {
+         double x = QGuiApplication::primaryScreen()->devicePixelRatio(); // 获得当前的缩放比例
+         auto pos = QCursor::pos();
+@@ -213,6 +222,7 @@ void XWinKillPreviewWidget::mouseMoveEvent(QMouseEvent *)
+             emit cursorUpdated(m_defaultCursor);
+         }
+     } else {
++#endif //WAYLAND_SESSION_SUPPORT
+         double x = QGuiApplication::primaryScreen()->devicePixelRatio(); // 获得当前的缩放比例
+         auto pos = QCursor::pos();
+         // get the list of windows under cursor from cache in stacked order
+@@ -263,7 +273,9 @@ void XWinKillPreviewWidget::mouseMoveEvent(QMouseEvent *)
+                 bg->clearSelection();
+             emit cursorUpdated(m_defaultCursor);
+         }
++#ifdef WAYLAND_SESSION_SUPPORT
+     }
++#endif //WAYLAND_SESSION_SUPPORT
+ }
+ 
+ // key press event handler
+@@ -310,11 +322,11 @@ void XWinKillPreviewWidget::initUI()
+         auto geom = screen->geometry();
+         // snapshot current scree
+         auto pixmap = screen->grabWindow(m_wminfo->getRootWindow(),geom.x(), geom.y(), geom.width(), geom.height());
+-
++#ifdef WAYLAND_SESSION_SUPPORT
+         if (WaylandCentered)
+             pixmap = screen->grabWindow(m_windowStates.end()->windowId,
+                                          geom.x(), geom.y(), geom.width(), geom.height());
+-
++#endif //WAYLAND_SESSION_SUPPORT
+         // create preview background widget for each screen
+         auto *background = new XWinKillPreviewBackgroundWidget(pixmap, this);
+         // update cursor on cursor updated signal
+@@ -337,6 +349,7 @@ void XWinKillPreviewWidget::initUI()
+ // wayland协议下建立连接
+ void XWinKillPreviewWidget::initConnections()
+ {
++#ifdef WAYLAND_SESSION_SUPPORT
+     if (WaylandCentered) {
+         connect(m_connectionThreadObject, &ConnectionThread::connected, this,
+             [this] {
+@@ -353,8 +366,11 @@ void XWinKillPreviewWidget::initConnections()
+ 
+         m_connectionThreadObject->initConnection();
+     }
++#endif //WAYLAND_SESSION_SUPPORT
+ }
++
+ //打印当前窗口信息接口
++#ifdef WAYLAND_SESSION_SUPPORT
+ void XWinKillPreviewWidget::print_window_states(const QVector<ClientManagement::WindowState> &m_windowStates)
+ {
+     if (WaylandCentered) {
+@@ -371,7 +387,10 @@ void XWinKillPreviewWidget::print_window_states(const QVector<ClientManagement::
+         }
+     }
+ }
++#endif //WAYLAND_SESSION_SUPPORT
++
+ //wayland 注册
++#ifdef WAYLAND_SESSION_SUPPORT
+ void XWinKillPreviewWidget::setupRegistry(Registry *registry)
+ {
+     if (WaylandCentered) {
+@@ -406,3 +425,4 @@ void XWinKillPreviewWidget::setupRegistry(Registry *registry)
+     }
+ 
+ }
++#endif //WAYLAND_SESSION_SUPPORT
+diff --git a/deepin-system-monitor-main/gui/xwin_kill_preview_widget.h b/deepin-system-monitor-main/gui/xwin_kill_preview_widget.h
+index dcfad5e1..a4827dea 100644
+--- a/deepin-system-monitor-main/gui/xwin_kill_preview_widget.h
++++ b/deepin-system-monitor-main/gui/xwin_kill_preview_widget.h
+@@ -23,6 +23,7 @@
+ #include "../config.h"
+ #include <QWidget>
+ //不再使用CMakeList开关宏的方式，改用全局变量运行时控制
++#ifdef WAYLAND_SESSION_SUPPORT
+ #include <KF5/KWayland/Client/clientmanagement.h>
+ #include <KF5/KWayland/Client/registry.h>
+ #include <KF5/KWayland/Client/connection_thread.h>
+@@ -37,6 +38,8 @@
+ 
+ using namespace KWayland::Client;
+ 
++#endif //WAYLAND_SESSION_SUPPORT
++
+ namespace core {
+ namespace wm {
+ class WMInfo;
+@@ -61,11 +64,13 @@ class XWinKillPreviewWidget : public QWidget
+      */
+     ~XWinKillPreviewWidget() override;
+ 
++#ifdef WAYLAND_SESSION_SUPPORT
+     /**
+      * @brief Print current window states
+      * @param QVector of window state which contains pid,windowid,resourceName,geometry,etc
+      */
+      void print_window_states(const QVector<ClientManagement::WindowState> &m_windowStates);
++#endif //WAYLAND_SESSION_SUPPORT
+ 
+ signals:
+     /**
+@@ -120,7 +125,7 @@ public slots:
+     QCursor m_killCursor;
+     // Default cursor style
+     QCursor m_defaultCursor;
+-
++#ifdef WAYLAND_SESSION_SUPPORT
+     //Vector of window states
+     QVector<ClientManagement::WindowState> m_windowStates;
+     //Kwayland Client Management
+@@ -136,7 +141,7 @@ public slots:
+     Compositor *m_compositor = nullptr;
+     //oringinal Kwayland window management
+     PlasmaWindowManagement *m_windowManagement = nullptr;
+-
++#endif //WAYLAND_SESSION_SUPPORT
+ };
+ 
+ #endif // XWIN_KILL_PREVIEW_WIDGET_H
