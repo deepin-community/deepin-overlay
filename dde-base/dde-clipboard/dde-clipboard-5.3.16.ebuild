@@ -19,7 +19,6 @@ RDEPEND="dev-qt/qtcore:5
 		dev-qt/qtgui:5
 		dev-qt/qtdbus:5
 		dev-qt/qtsvg:5
-		dde-base/dde-network-utils
 		sys-libs/mtdev
 		x11-libs/libXrandr
 		media-libs/fontconfig
@@ -37,8 +36,8 @@ RDEPEND="dev-qt/qtcore:5
 DEPEND="${RDEPEND}
 		dde-base/dde-qt-dbus-factory
 		x11-libs/gsettings-qt
-		>=dde-base/dtkwidget-5.1.2:=
-		>=dde-base/dtkgui-5.1.2:=
+		>=dde-base/dtkwidget-5.5.0:=
+		>=dde-base/dtkgui-5.5.0:=
 		virtual/pkgconfig
 		"
 
