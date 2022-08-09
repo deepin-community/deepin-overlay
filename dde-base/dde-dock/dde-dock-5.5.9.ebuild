@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake gnome2-utils
+inherit cmake xdg
 
 DESCRIPTION="Deepin desktop environment - Dock module"
 HOMEPAGE="https://github.com/linuxdeepin/dde-dock"
@@ -18,11 +18,10 @@ RDEPEND="dev-qt/qtsvg:5
 		dev-qt/qtx11extras:5
 		>=dde-base/deepin-menu-5.0.1
 		>=dde-base/dde-daemon-5.9.0
-		>=dde-base/dde-network-utils-5.0.4
 		>=dde-base/dde-qt5integration-5.1.0
 		dde-base/dde-control-center
 		app-accessibility/onboard
-		>=dde-base/dtkwidget-5.5:=
+		>=dde-base/dtkwidget-5.5.0:=
 		"
 
 DEPEND="${RDEPEND}
@@ -47,12 +46,4 @@ src_prepare() {
 		-DDOCK_TRAY_USE_NATIVE_POPUP=YES
 	)
 	cmake_src_prepare
-}
-
-pkg_postinst() {
-	gnome2_schemas_update
-}
-
-pkg_postrm() {
-	gnome2_schemas_update
 }
