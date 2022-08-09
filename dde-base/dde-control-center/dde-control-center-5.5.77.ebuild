@@ -30,7 +30,6 @@ RDEPEND="dev-qt/qtsvg:5
 		>=dde-base/dde-api-5.1.1
 		dde-base/dde-account-faces
 		>=dde-base/startdde-5.2.1
-		>=dde-base/dde-network-utils-5.0.4
 		dev-util/desktop-file-utils
 		dev-libs/geoip
 		dev-libs/libpwquality
@@ -39,7 +38,9 @@ RDEPEND="dev-qt/qtsvg:5
 		redshift? ( x11-misc/redshift )
 		!systemd? ( app-admin/openrc-settingsd )
 		dde-base/deepin-pw-check
+		virtual/libcrypt:=
 		"
+
 DEPEND="${RDEPEND}
 		>=dde-base/dtkwidget-5.5.0:=
 		>=dde-base/dde-qt-dbus-factory-5.2.0.1:=
@@ -67,7 +68,7 @@ src_prepare() {
 
 	sed -i '/execute_process(COMMAND glib-compile-schemas/d' CMakeLists.txt
 	# Fix mold
-	sed -i 's/-Wl,--as-need//' src/frame/CMakeLists.txt || die
+	sed -i 's/as-need/as-needed/' src/frame/CMakeLists.txt || die
 	#sed -i 's/module" OFF/module" ON/' src/frame/CMakeLists.txt || die
 	cmake_src_prepare
 }
