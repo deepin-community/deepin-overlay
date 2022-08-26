@@ -1,10 +1,10 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
 EAPI=7
 
-inherit cmake-utils xdg-utils
+inherit cmake xdg
 
 DESCRIPTION="Deepin Photo Manager"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-album"
@@ -12,7 +12,7 @@ SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 
 LICENSE="GPL-3+"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE="+jpeg +png +tiff raw mng jpeg2k"
 
 RDEPEND="dev-qt/qtsvg:5
@@ -31,6 +31,7 @@ RDEPEND="dev-qt/qtsvg:5
 		media-libs/libexif
 		media-libs/libglvnd
 		media-libs/freeimage[jpeg?,png?,tiff?,raw?,mng?,jpeg2k?]
+		media-libs/deepin-image-editor
 		sys-libs/mtdev
 		virtual/libudev
 		x11-base/xorg-proto
@@ -39,32 +40,21 @@ RDEPEND="dev-qt/qtsvg:5
 		"
 
 DEPEND="${RDEPEND}
-		>=dde-base/dtkwidget-5.1.2:=
+		>=dde-base/dtkwidget-5.5.0:=
 		dev-qt/gio-qt
 		dde-base/udisks2-qt5
 		"
 
 src_prepare() {
 	LIBDIR=$(get_libdir)
-	sed -i "s|/lib\([/)]\)|/${LIBDIR}\1|g" \
-		libUnionImage/CMakeLists.txt || die
-
-	cmake-utils_src_prepare
+	sed -i "s|/lib\([/)]\)|/${LIBDIR}\1|g" libUnionImage/CMakeLists.txt || die
+	sed -i '/FIF_FAXG3/d' libUnionImage/UnionImage/unionimage.cpp || die
+	cmake_src_prepare
 }
 
 src_configure() {
 	local mycmakeargs=(
 		-DVERSION=${PV}
 	)
-	cmake-utils_src_configure
-}
-
-pkg_postinst() {
-	xdg_desktop_database_update
-	xdg_mimeinfo_database_update
-}
-
-pkg_postrm() {
-	xdg_desktop_database_update
-	xdg_mimeinfo_database_update
+	cmake_src_configure
 }
