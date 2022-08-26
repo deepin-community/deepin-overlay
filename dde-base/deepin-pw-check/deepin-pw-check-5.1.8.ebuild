@@ -32,8 +32,9 @@ RDEPEND="
 		"
 
 DEPEND="${RDEPEND}
-		dev-libs/iniparser
 		dde-base/deepin-gettext-tools
+		dev-go/go-dbus-factory
+		dev-libs/iniparser
 		"
 
 src_prepare() {
