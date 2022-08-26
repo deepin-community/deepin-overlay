@@ -1,10 +1,9 @@
-# Copyright 1999-2021 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit cmake-utils
+inherit cmake xdg
 
 DESCRIPTION="Deepin Device Manager"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-devicemanager"
@@ -12,7 +11,7 @@ SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 
 LICENSE="GPL-3+"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE="debug"
 
 RDEPEND="dev-qt/qtcore:5
@@ -32,20 +31,18 @@ RDEPEND="dev-qt/qtcore:5
 		"
 
 DEPEND="${RDEPEND}
-		>=dde-base/dtkwidget-5.1.2:=
-		>=dde-base/dtkgui-5.1.2:=
+		>=dde-base/dtkwidget-5.5.0:=
+		>=dde-base/dtkgui-5.5.0:=
 		>=dde-base/dde-qt-dbus-factory-5.0.16
 		virtual/pkgconfig
 		"
 
 src_prepare() {
-	sed -i 's#stub.set(ADDR(QThreadPool, start), ut_ThreadPool_start);#stub.set(static_cast<void (QThreadPool::*)(QRunnable*, int)>(ADDR(QThreadPool, start)), ut_ThreadPool_start);#g' \
-		deepin-devicemanager/tests/src/ThreadPool/ut_readfilepool.cpp || die
 	sed -i 's|/etc/dbus-1|/usr/share/dbus-1|' \
 		deepin-devicemanager-server/CMakeLists.txt || die
-	# sed -i '/const QString COMMUNITY_STR =/c\const QString COMMUNITY_STR = "Gentoo-DDE";' \
-	# 	deepin-devicemanager/src/MacroDefinition.h || die
-	cmake-utils_src_prepare
+	sed -i '/const QString COMMUNITY_STR =/c\const QString COMMUNITY_STR = "Gentoo-DDE";' \
+		deepin-devicemanager/src/MacroDefinition.h || die
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -58,7 +55,7 @@ src_configure() {
 		-DVERSION=${PV}
 		-DCMAKE_BUILD_TYPE=${build_type}
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 pkg_postinst() {
