@@ -30,7 +30,7 @@ EGO_VENDOR=(
 "github.com/teambition/rrule-go c4b1bf2"
 "github.com/godbus/dbus e0a146e"
 "github.com/fsnotify/fsnotify 7f4cf4d"
-"golang.org/x/sys cc9327a github.com/golang/sys"
+"golang.org/x/sys 6c1b26c5 github.com/golang/sys"
 "github.com/Lofanmi/pinyin-golang 30cdbfc"
 "github.com/stretchr/testify acba37e"
 "github.com/pmezard/go-difflib 792786c"
