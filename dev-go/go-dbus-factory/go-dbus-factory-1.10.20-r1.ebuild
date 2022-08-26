@@ -9,7 +9,7 @@ EGO_VENDOR=(
 	"golang.org/x/net aaf60122140d3fcf75376d319f0554393160eb50 github.com/golang/net"
 	"github.com/godbus/dbus e0a146e"
 	"github.com/fsnotify/fsnotify 7f4cf4d"
-	"golang.org/x/sys cc9327a github.com/golang/sys"
+	"golang.org/x/sys 6c1b26c5 github.com/golang/sys"
 )
 
 inherit golang-vcs-snapshot
