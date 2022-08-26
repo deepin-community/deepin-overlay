@@ -1,6 +1,5 @@
-# Copyright 1999-2021 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
@@ -10,8 +9,8 @@ SRC_URI=""
 
 LICENSE="metapackage"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
-IUSE="+calendar +boot +calculator +editor +font +picker +voice +topbar +compressor +reader +log +devicemanager +printer"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
+IUSE="+calendar +boot +calculator +editor +font +picker +voice +compressor +reader +log +devicemanager +printer"
 
 RDEPEND="
 	calendar? ( dde-extra/dde-calendar )
@@ -20,9 +19,8 @@ RDEPEND="
 	editor? ( dde-extra/deepin-editor )
 	font? ( dde-extra/deepin-font-manager )
 	picker? ( dde-extra/deepin-picker )
-	voice? (dde-extra/deepin-voice-note )
+	voice? ( dde-extra/deepin-voice-note )
 	dde-extra/deepin-system-monitor
-	topbar? ( dde-extra/deepin-topbar )
 	compressor? ( dde-extra/deepin-compressor )
 	reader? ( dde-extra/deepin-reader )
 	log? ( dde-extra/deepin-log-viewer )
