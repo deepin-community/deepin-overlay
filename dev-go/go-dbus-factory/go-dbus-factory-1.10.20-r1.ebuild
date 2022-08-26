@@ -6,7 +6,7 @@ EAPI=7
 EGO_PN="github.com/linuxdeepin/go-dbus-factory"
 
 EGO_VENDOR=(
-	"golang.org/x/net aaf60122140d3fcf75376d319f0554393160eb50 github.com/golang/net"
+	"golang.org/x/net 183a9ca1 github.com/golang/net"
 	"github.com/godbus/dbus e0a146e"
 	"github.com/fsnotify/fsnotify 7f4cf4d"
 	"golang.org/x/sys 6c1b26c5 github.com/golang/sys"
