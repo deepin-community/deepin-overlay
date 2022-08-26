@@ -1,10 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=7
 
-inherit qmake-utils xdg-utils
+inherit cmake xdg
 
 DESCRIPTION="Deepin Image Viewer"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-image-viewer"
@@ -12,7 +11,7 @@ SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.g
 
 LICENSE="GPL-3+"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE="+jpeg +png +tiff raw mng jpeg2k"
 
 RDEPEND="dev-qt/qtsvg:5
@@ -31,6 +30,7 @@ RDEPEND="dev-qt/qtsvg:5
 		media-libs/libexif
 		media-libs/libglvnd
 		media-libs/freeimage[jpeg?,png?,tiff?,raw?,mng?,jpeg2k?]
+		media-libs/deepin-image-editor
 		sys-libs/mtdev
 		virtual/libudev
 		x11-base/xorg-proto
@@ -38,32 +38,15 @@ RDEPEND="dev-qt/qtsvg:5
 		"
 
 DEPEND="${RDEPEND}
-		>=dde-base/dtkwidget-5.1.2:=
+		>=dde-base/dtkwidget-5.5.0:=
 		dev-qt/gio-qt
 		dde-base/udisks2-qt5
 	    "
 
+PATCHES=(
+		"${FILESDIR}"/${PN}-5.8.15-remove-unused-deps.patch
+)
+
 src_prepare() {
-	# the same manual_icon and app_icon install in the same path
-	sed -i 's|app_icon\ ||g' src/src.pro || die
-	export QT_SELECT=qt5
-	eqmake5 DEFINES+="VERSION=${PV}"
-
-	default_src_prepare
-}
-
-src_install() {
-	emake INSTALL_ROOT=${D} install
-}
-
-pkg_postinst() {
-    xdg_desktop_database_update
-    xdg_mimeinfo_database_update
-    xdg_icon_cache_update
-}
-
-pkg_postrm() {
-    xdg_desktop_database_update
-    xdg_mimeinfo_database_update
-    xdg_icon_cache_update
+	cmake_src_prepare
 }
