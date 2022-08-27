@@ -50,6 +50,10 @@ src_prepare() {
 	sed -i "/#undef u_errorName/d" deepin-system-monitor-main/common/han_latin.cpp || die
 	sed -i "/U_DEF2_ICU_ENTRY_POINT_RENAME/d" deepin-system-monitor-main/common/han_latin.cpp || die
 	sed -i "s/UERRORNAME/u_errorName/" deepin-system-monitor-main/common/han_latin.cpp || die
+
+	# Fix lib location
+	LIBDIR=$(get_libdir)
+	sed -i "s#lib/#$LIBDIR/#" deepin-system-monitor-plugin/CMakeLists.txt || die
 	cmake_src_prepare
 }
 
