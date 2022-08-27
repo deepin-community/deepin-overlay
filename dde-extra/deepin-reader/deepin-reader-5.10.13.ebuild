@@ -41,6 +41,7 @@ DEPEND="${RDEPEND}
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-5.10.13-openjpeg-2.5.patch
+	"${FILESDIR}"/${PN}-5.10.13-Add-riscv-support.patch
 )
 
 src_prepare() {

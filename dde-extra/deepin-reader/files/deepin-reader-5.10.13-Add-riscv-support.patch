@@ -1,0 +1,29 @@
+From df5bf38a47b95333b53c0cafa0dfbc35e1f8e985 Mon Sep 17 00:00:00 2001
+From: Rabenda <rabenda.cn@gmail.com>
+Date: Sat, 27 Aug 2022 13:07:47 +0800
+Subject: [PATCH] Add riscv support
+
+Signed-off-by: Rabenda <rabenda.cn@gmail.com>
+---
+ .../src/3rdparty/pdfium/pdfium/build/build_config.h          | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/3rdparty/deepin-pdfium/src/3rdparty/pdfium/pdfium/build/build_config.h b/3rdparty/deepin-pdfium/src/3rdparty/pdfium/pdfium/build/build_config.h
+index 8695789..d387372 100644
+--- a/3rdparty/deepin-pdfium/src/3rdparty/pdfium/pdfium/build/build_config.h
++++ b/3rdparty/deepin-pdfium/src/3rdparty/pdfium/pdfium/build/build_config.h
+@@ -209,6 +209,11 @@
+ #define ARCH_CPU_ALPHA21264 1
+ #define ARCH_CPU_64_BITS 1
+ #define ARCH_CPU_LITTLE_ENDIAN 1
++#elif defined(__riscv) && (__riscv_xlen == 64)
++#define ARCH_CPU_RISCV_FAMILY 1
++#define ARCH_CPU_RISCV64 1
++#define ARCH_CPU_64_BITS 1
++#define ARCH_CPU_LITTLE_ENDIAN 1
+ #else
+ #error Please add support for your architecture in build/build_config.h
+ #endif
+-- 
+2.35.1
+
