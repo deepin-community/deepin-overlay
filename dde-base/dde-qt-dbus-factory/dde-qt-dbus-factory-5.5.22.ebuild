@@ -16,7 +16,10 @@ KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
 RDEPEND="dev-qt/qtdbus:5
-		dev-qt/qtcore:5"
+		dev-qt/qtcore:5
+		>=dde-base/dtkcore-5.5.0:=
+		dev-go/go-dbus-factory
+		"
 
 DEPEND="${RDEPEND}
 		dev-qt/qtgui:5
