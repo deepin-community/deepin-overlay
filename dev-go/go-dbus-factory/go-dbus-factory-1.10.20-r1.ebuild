@@ -27,7 +27,9 @@ KEYWORDS="~amd64 ~arm64 ~loong ~riscv ~x86"
 IUSE=""
 
 DEPEND="dev-go/deepin-go-lib
-	>=dev-go/go-gir-generator-2.0.0"
+	>=dev-go/go-gir-generator-2.0.0
+	x11-libs/gtk+:3
+	"
 
 src_compile() {
 	mkdir -p "${T}/golibdir/"
