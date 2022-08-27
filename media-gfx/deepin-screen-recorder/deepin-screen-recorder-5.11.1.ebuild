@@ -43,23 +43,19 @@ DEPEND="${RDEPEND}
 src_prepare() {
 	LIBDIR=$(get_libdir)
 	sed -i "s|lib/|${LIBDIR}/|g" \
-		src/dde-dock-plugins/recordtime/CMakeLists.txt src/dde-dock-plugins/shotstart/CMakeLists.txt || die
-	sed -i "s|lib/|${LIBDIR}/|g" \
-		src/dde-dock-plugins/recordtime/recordtime.pro || die
+		src/dde-dock-plugins/recordtime/recordtime.pro \
+		src/dde-dock-plugins/shotstart/shotstart.pro || die
+
 	sed -i '/include <X11.extensions.XTest.h>/a #undef min' src/event_monitor.cpp || die
 
 	# https://github.com/linuxdeepin/developer-center/issues/3035
-	sed -i "s^cat /etc/os-version | grep 'Community'^echo 'Community'^" src/src.pro
+	sed -i "s^cat /etc/os-version | grep 'Community'^echo 'Community'^" src/src.pro || die
 
 	# OpenCV 4 compatibility
-	sed -i '/#include<opencv2/i #include <opencv2/imgproc/types_c.h>' src/utils/pixmergethread.h
+	sed -i '/#include<opencv2/i #include <opencv2/imgproc/types_c.h>' src/utils/pixmergethread.h || die
+
 	# OpenCV missing in pkg-config targets
-	sed -i 's/dframeworkdbus/dframeworkdbus opencv4/' src/src.pro
+	sed -i 's/dframeworkdbus/dframeworkdbus opencv4/' src/src.pro || die
 
 	default
-	QT_SELECT=qt5 eqmake5 screen_shot_recorder.pro
-}
-
-src_install() {
-	emake INSTALL_ROOT=${D} install
 }
