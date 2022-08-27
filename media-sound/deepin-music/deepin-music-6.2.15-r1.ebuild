@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake xdg-utils
+inherit cmake xdg
 
 DESCRIPTION="Deepin Music Player"
 HOMEPAGE="https://github.com/linuxdeepin/deepin-music"
@@ -28,7 +28,7 @@ RDEPEND="dev-qt/qtmultimedia:5[gstreamer]
 	x11-libs/qtmpris
 	"
 DEPEND="${RDEPEND}
-	>=dde-base/dtkwidget-5.5:=
+	>=dde-base/dtkwidget-5.5.0:=
 	"
 
 src_prepare() {
@@ -39,14 +39,9 @@ src_prepare() {
 	cmake_src_prepare
 }
 
-pkg_postinst() {
-	xdg_desktop_database_update
-	xdg_mimeinfo_database_update
-	xdg_icon_cache_update
-}
-
-pkg_postrm() {
-	xdg_desktop_database_update
-	xdg_mimeinfo_database_update
-	xdg_icon_cache_update
+src_configure() {
+  local mycmakeargs=(
+    -DVERSION=${PV}
+  )
+  cmake_src_configure
 }
