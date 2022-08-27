@@ -29,7 +29,7 @@ EGO_VENDOR=(
 "gopkg.in/yaml.v3 496545a github.com/go-yaml/yaml"
 )
 
-inherit golang-vcs-snapshot golang-build xdg-utils
+inherit golang-vcs-snapshot golang-build xdg
 
 DESCRIPTION="Go-lang bingdings for dde-daemon"
 HOMEPAGE="https://github.com/linuxdeepin/dde-api"
@@ -78,6 +78,7 @@ src_prepare() {
 
 	default_src_prepare
 }
+
 src_compile() {
 	mkdir -p "${T}/golibdir/"
 	cp -r  "${S}/src/${EGO_PN}/vendor"  "${T}/golibdir/src"
@@ -94,6 +95,3 @@ src_install() {
 	cd ${S}/src/${EGO_PN}
 	emake DESTDIR=${D} libdir=/$(get_libdir) SYSTEMD_LIB_DIR=/lib GOSITE_DIR=$(get_golibdir) install
 }
-
-pkg_postinst() { xdg_icon_cache_update; }
-pkg_postrm() { xdg_icon_cache_update; }
