@@ -28,6 +28,7 @@ RDEPEND="dev-qt/qtcore:5
 	dev-qt/qtdbus:5
 	x11-libs/startup-notification
 	media-video/vlc
+	media-libs/gstreamer
 	"
 
 DEPEND="${RDEPEND}
