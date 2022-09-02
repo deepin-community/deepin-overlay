@@ -6,8 +6,8 @@ EAPI=8
 inherit qmake-utils
 
 DESCRIPTION="Qml bindings for GSettings."
-HOMEPAGE="https://launchpad.net/gsettings-qt"
-SRC_URI="https://github.com/linuxdeepin/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+HOMEPAGE="https://gitlab.com/ubports/development/core/gsettings-qt"
+SRC_URI="https://gitlab.com/ubports/development/core/${PN}/-/archive/v${PV}/${PN}-v${PV}.tar.bz2 -> ${P}.tar.bz2"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -20,21 +20,22 @@ DEPEND="dev-libs/glib:2
 	dev-qt/qtdeclarative:5
 	test? ( dev-qt/qttest:5 )"
 
-unset QT_QPA_PLATFORMTHEME
-MAKEOPTS="${MAKEOPTS} -j1"
+S=${WORKDIR}/${PN}-v${PV}
+
+#unset QT_QPA_PLATFORMTHEME
+#MAKEOPTS="${MAKEOPTS} -j1"
 
 src_prepare() {
-	eapply_user
-
+	default
 	# Fix relocation error when rebuild with different Qt version
-	sed -i 's|LD_PRELOAD=../src/libgsettings-qt.so.1|LD_PRELOAD=../src/libgsettings-qt.so.1\:./libGSettingsQmlPlugin.so|g' ${S}/GSettings/gsettings-qt.pro
+	#sed -i 's|LD_PRELOAD=../src/libgsettings-qt.so.1|LD_PRELOAD=../src/libgsettings-qt.so.1\:./libGSettingsQmlPlugin.so|g' ${S}/GSettings/gsettings-qt.pro
 
 	# Don't pre-strip
-	echo "CONFIG+=nostrip" >> "${S}"/GSettings/gsettings-qt.pro
-	echo "CONFIG+=nostrip" >> "${S}"/src/gsettings-qt.pro
-	echo "CONFIG+=nostrip" >> "${S}"/tests/tests.pro
+	#echo "CONFIG+=nostrip" >> "${S}"/GSettings/gsettings-qt.pro
+	#echo "CONFIG+=nostrip" >> "${S}"/src/gsettings-qt.pro
+	#echo "CONFIG+=nostrip" >> "${S}"/tests/tests.pro
 
-	use test || \
+	#use test || \
 		sed -e 's:tests/tests.pro tests/cpptest.pro::g' \
 			-i "${S}"/gsettings-qt.pro
 }
