@@ -33,6 +33,9 @@ DEPEND="dev-qt/qtdbus:5
 		media-video/ffmpeg
 		media-libs/libdvdnav
 		x11-libs/qtmpris
+		media-libs/gstreamer
+		media-libs/gst-plugins-base
+		media-libs/libva
 		"
 RDEPEND="${DEPEND}
 		>=dde-base/dtkcore-5.5.0
@@ -46,15 +49,14 @@ src_prepare() {
 		src/backends/mpv/mpv_glwidget.h \
 		src/backends/mpv/mpv_proxy.h || die
 
+	sed -i '/avformat.h>/i #include <libavcodec/avcodec.h>' \
+		src/libdmr/playlist_model.cpp || die
+
 	LIBDIR=$(get_libdir)
 	sed -i '/pkg_check_modules(DBusextended/d' src/CMakeLists.txt || die
 	sed -i 's/PkgConfig::DBusextended//g' src/CMakeLists.txt || die
 	sed -i "s|lib/|${LIBDIR}/|g" src/CMakeLists.txt || die
 
-	# https://github.com/linuxdeepin/deepin-movie-reborn/issues/76
-	sed -i '/setCanShowInUI/d' src/vendor/presenter.cpp || die
-	# Fix mold
-	sed -i 's/-Wl,--as-need//g' src/CMakeLists.txt || die
 	cmake_src_prepare
 }
 
